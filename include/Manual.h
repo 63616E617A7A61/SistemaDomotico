@@ -1,11 +1,10 @@
 #include "Device.h"
-#include "Clock.h"
 
 class Manual : public Device{
 private:
     
 public:
-    Manual();
-    void setTimer(Clock timer);
+    Manual(int id, std::string name, float energy);
     bool check(Clock skipTime);
+    void setTimer(Clock timer);
 };

@@ -1,3 +1,6 @@
+#ifndef DEVICE
+#define DEVICE
+
 #include <string>
 #include "Clock.h"
 
@@ -9,12 +12,25 @@ private:
     float enTotal;
     Clock timeOn;
     Clock timer;
+    bool active;
 public:
     Device(int id, std::string name, float energy);
+    Device();
     std::string show();
-    bool virtual check(Clock skipTime);
+    bool virtual check(Clock skipTime){return false;};
     void turnOn(Clock currTime);
-    void turnOff(Clock currTime);
+    void turnOff(Clock currTime); //spegne il dispositivo calcola i consumi e chiama deactivate()
     Device& operator=(const Device& other) = delete;
-    // getter e setter
+    std::string getName();
+    float getEnTotal();
+    float getEnergy();
+    void deactivate(); // set active to false
+    void setEnTotal(float val);
+    void removeSchedule(); // svuota timeOn
+    void setSchedule(Clock start); //se l'orario è valico imposta timeOn altrimenti lancia eccezione (invalid_argument)
+    void removeTimer();
+    bool isActive();
+    virtual ~Device();
 };
+
+#endif

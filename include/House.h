@@ -1,20 +1,23 @@
 #include <vector>
 #include <string>
 #include "Device.h"
+#include "Manual.h"
 #include "Clock.h"
 
 class House{
 private:
     std::vector<Device> devices;
     std::vector<Device> activeD;
-    const float grid = 3.5;
+    const float grid;
     float currEnCost;
     Clock currTime;
 
     Device search(std::string name);
     bool checkOvrload();
+    bool isManual(Device d);
+    void deactivateDevice(Device d);
 public:
-    House();
+    House(float grid);
     std::string show();
     std::string show(std::string name);
     std::string setTime(Clock skipTime);
@@ -24,7 +27,7 @@ public:
     std::string setScheduledOn(std::string name, Clock start);
     std::string setScheduledOn(std::string name, Clock start, Clock stop);
     std::string resetTime();
-    std::string resetTimer();
+    std::string resetTimers();
     std::string resetAll();
 };
 
