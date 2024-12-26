@@ -1,0 +1,10 @@
+Impianto fotovoltaico, 1.5
+Lavatrice, 1:50, -2
+Lavastoviglie, 3:15, -1.5
+Pompa di calore, -2
+Tapparelle elettriche, 0:01, -0.3
+Scaldabagno, -1
+Frigorifero, -0.4
+Forno a microonde, 0:02, -0.8
+Asciugatrice, 1:00, -0.5
+Televisore, 1:00, -0.2
