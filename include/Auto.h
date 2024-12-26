@@ -1,3 +1,6 @@
+#ifndef AUTO
+#define AUTO
+
 #include "Device.h"
 
 class Auto : public Device{
@@ -9,3 +12,4 @@ public:
     bool check(Clock skipTime);
 };
     
+#endif

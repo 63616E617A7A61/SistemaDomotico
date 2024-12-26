@@ -1,3 +1,6 @@
+#ifndef HOUSE
+#define HOUSE
+
 #include <vector>
 #include <string>
 #include "Device.h"
@@ -32,5 +35,4 @@ public:
     std::string loadsDevices(const std::string& filePath);
 };
 
-
-
+#endif

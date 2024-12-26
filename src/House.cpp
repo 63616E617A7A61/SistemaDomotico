@@ -8,8 +8,7 @@
 #include <fstream>
 
 /* TODO PER ME:
-- Test generale
-- note per gli altri (es: ha senso rimuiovere i timer (la tv non puo' essere che dura solo 1h))
+- tradurre tutto in inglese
 */
 
 /*
@@ -23,12 +22,17 @@ House::House(float maxPower) : grid(maxPower){
 
 std::string House::show(){
     std::string out = "";
-    int enTot = 0;
+    float absorbed = 0;
+    float wasted = 0;
     for(Device d : devices){
         out += d.show() + "\n";
-        enTot += d.getEnTotal();
+        if (d.getEnTotal() < 0)
+            wasted += d.getEnTotal();
+        else
+            absorbed += d.getEnTotal();
     }
-    out += "Il systema ha prodotto/consumato finora " + std::to_string(enTot);
+    out += "Il sistema ha prodotto finora " + std::to_string(absorbed);
+    out += "\nIl sistema ha consumato finora " + std::to_string(wasted);
 }
 
 std::string House::show(std::string name){
@@ -58,12 +62,12 @@ std::string House::setTime(Clock skipTime){
                 events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn(), std::pair<Device&, bool>(i, true)));
                 // se il dispositivo in quel lasso di tempo si accende ma si spegne anche
                 try{
-                    if(i.getTimer().isValid() && (i.getTimeOn() + i.getTimer() < skipTime)){
+                    if(i.getTimer().isValid() && (i.getTimeOn() + i.getTimer() <= skipTime)){
                         events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn() + i.getTimer(), std::pair<Device&, bool>(i, false)));
                     }
                 }
                 catch(const std::exception& e){
-                    continue;
+                    continue; // vuol dire che non ha un timer valido (nullpntr)
                 }
             }else {  //evento off
                 events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn() + i.getTimer(), std::pair<Device&, bool>(i, false)));
@@ -73,7 +77,7 @@ std::string House::setTime(Clock skipTime){
 
     std::string out = "";
 
-    for(std::pair<Clock, std::pair<Device&, bool>> i : events){
+    for(std::pair<Clock, std::pair<Device&, bool>> i : events){ //esegue gli eventi in ordine
         Clock key = i.first;
         Device& value = i.second.first;
         bool flag = i.second.second;
@@ -110,14 +114,14 @@ std::string House::setOn(std::string name){
         d.turnOn(currTime);
         currEnCost += d.getEnergy();
         activeD.push_back(d);
-        out += "Dispositivo " + d.getName() + " acceso";
+        out += currTime.toString() + " Dispositivo " + d.getName() + " acceso";
         //controllo se energicamente è tutto ok
         if(checkOvrload()) out += "\nIl systema e' in sovraccarico!";
         while (checkOvrload()){
             Device r = activeD[0];
             r.turnOff(currTime);
             currEnCost -= r.getEnergy();
-            out += "\nDispositivo " + d.getName() + " spento";
+            out += "\n" + currTime.toString() + " Dispositivo " + d.getName() + " spento";
             deactivateDevice(r); // cancella il primo elemento
         }
         return out;
@@ -136,19 +140,20 @@ std::string House::setOff(std::string name){
         d.turnOff(currTime);
         currEnCost -= d.getEnergy();
         deactivateDevice(d); //rimuove d da activeD
-        return "Dispositivo " + d.getName() + " spento";
+        return currTime.toString() + " Dispositivo " + d.getName() + " spento";
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
     }
 }
 
+//SOLO DISPOSITIVI MANUAL (per scelta)
 std::string House::remove(std::string name){
     try {
         Device d = search(name);
         if (isManual(d)){
             d.removeTimer();
-            return "Timer rimosso con successo";
+            return "Timer rimosso con successo da: " + d.getName();
         }else{
             return "Impossibile rimuovere il timer a un device a ciclo prefissato";
         }
@@ -158,24 +163,32 @@ std::string House::remove(std::string name){
     }
 }
 
+//PER EVITARE BUG NOTEVOLI NEL SET TIME SI PUO' FARE SOLO SE IL DISPOSITIVO E' SPENTO
 std::string House::setScheduledOn(std::string name, Clock start){
     try {
         Device d = search(name);
+        if(d.isActive())
+            return "Impossibile impostare un orario di accensione ad un dispositivo gia' acceso";
+
         d.setSchedule(start);
-        return "Impostato correttamente l'orario di accensione";   
+        return "Impostato correttamente l'orario di accensione al dispositivo " + d.getName();   
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
     }
 }
 
-//SOLO DISPOSITIVI MANUAL (per scelta)
+//SOLO DISPOSITIVI MANUAL
+//PER EVITARE BUG NOTEVOLI NEL SET TIME SI PUO' FARE SOLO SE IL DISPOSITIVO E' SPENTO
 std::string House::setScheduledOn(std::string name, Clock start, Clock stop){
     try {
         Device d = search(name);
         if (isManual(d)){
             Manual* derivedPtr = dynamic_cast<Manual*>(&d);
             try {  // per vedere se l'orario è valido o no
+                if(derivedPtr->isActive())
+                    return "Impossibile impostare un orario di accensione ad un dispositivo gia' acceso";
+
                 derivedPtr->setTimer(start-stop); // Clock start - Clock stop = durata del "timer"
             }
             catch(const std::exception& e) {
@@ -221,7 +234,7 @@ std::string House::resetTimers(){
     for(Device d : devices){
         d.removeTimer();
     }
-    return "Rimossi tutti i timer di tutti i dispositivi. ";
+    return "Rimossi tutti i timer di tutti i dispositivi";
 }
 
 /*
@@ -316,7 +329,7 @@ void House::deactivateDevice(Device d){
     for(auto i = activeD.begin(); i != activeD.end(); ){
         if (i->getName() == d.getName() && i->getId() == d.getId()) {
             i = activeD.erase(i);
-        }else{
+        }else{  // senno' non cancella l'ultimo
             ++i;
         }
     }

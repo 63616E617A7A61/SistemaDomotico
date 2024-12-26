@@ -1,6 +1,8 @@
 #ifndef CLOCK
 #define CLOCK
 
+#include <string>
+
 class Clock{
 private:
     int hh;
@@ -15,12 +17,14 @@ public:
     Clock operator- (Clock &time);
     void reset();
     bool operator> (Clock &time);
+    bool operator<= (Clock &time);
     bool operator< (Clock &time);
     bool operator== (Clock &time);
     void setHh(int hh);
     void setMm(int mm);
     int getHh();
     int getMm();
+    std::string toString(); // ritorna [hh:mm]
 };
 
 #endif

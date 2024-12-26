@@ -1,3 +1,6 @@
+#ifndef MANUAL
+#define MANUAL
+
 #include "Device.h"
 
 class Manual : public Device{
@@ -8,3 +11,5 @@ public:
     bool check(Clock skipTime);
     void setTimer(Clock timer);
 };
+
+#endif
