@@ -29,6 +29,7 @@ public:
     std::string resetTime();
     std::string resetTimers();
     std::string resetAll();
+    std::string loadsDevices(const std::string& filePath);
 };
 
 

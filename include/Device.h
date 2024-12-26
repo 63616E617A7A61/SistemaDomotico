@@ -20,10 +20,13 @@ public:
     bool virtual check(Clock skipTime){return false;};
     void turnOn(Clock currTime);
     void turnOff(Clock currTime); //spegne il dispositivo calcola i consumi e chiama deactivate()
-    Device& operator=(const Device& other) = delete;
+    // Device& operator=(const Device& other) = delete;  da problemi nella classe House.cpp
     std::string getName();
     float getEnTotal();
     float getEnergy();
+    int getId();
+    Clock getTimeOn();
+    Clock getTimer();
     void deactivate(); // set active to false
     void setEnTotal(float val);
     void removeSchedule(); // svuota timeOn
