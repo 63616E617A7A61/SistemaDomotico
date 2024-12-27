@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <map>
 #include <fstream>
+#include <cmath>
 
 /* TODO PER ME:
 - tradurre tutto in inglese
@@ -302,7 +303,7 @@ Device House::search(std::string name){
 }
     
 bool House::checkOvrload(){ // vero se c'è overload, falso se è tutto ok
-    return fabs(currEnCost) > grid; //fabs: valore assoluto per i float
+    return abs(currEnCost) > grid; //in c++ in <cmath> abs fa overload per tutti i tipi ti dato primitivo
 }
 
 bool House::isManual(Device d){ // testato (funziona) non lancia eccezioni
