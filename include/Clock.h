@@ -2,30 +2,35 @@
 #define CLOCK
 
 #include <string>
+#include <stdexcept>
 
 class Clock{
-private:
-    int hh;
-    int mm;
-    bool active;
-public:
-    Clock(); //imposta l'orario a 0,0
-    Clock(int hh, int mm); //inizializza l'orario se e' valido senno' lancia exception
-    Clock(std::string time);    //estrae da stringa hh e mm e chiama Clock(int, int)
-    bool isActive();
-    bool isValid(); //verifica se l'orario è "corretto" e se non lo è lancia eccezione e torna false
-    Clock operator+ (Clock &time);
-    Clock operator- (Clock &time);
-    void reset();
-    bool operator> (Clock &time);
-    bool operator<= (Clock &time);
-    bool operator< (Clock &time);
-    bool operator== (Clock &time);
-    void setHh(int hh);
-    void setMm(int mm);
-    int getHh();
-    int getMm();
-    std::string toString(); // ritorna [hh:mm]
+    private:
+        int hh;
+        int mm;
+    public:
+        Clock(); //imposta l'orario a 0,0
+        Clock(int hh, int mm); //inizializza l'orario se e' valido senno' lancia exception
+        Clock(std::string time);    //estrae da stringa hh e mm e chiama Clock(int, int)
+        
+        int getHh() const { return hh; }
+        int getMm() const { return mm; }
+
+        void reset();
+        
+        void setHh(int hh);
+        void setMm(int mm);
+        
+        std::string toString(); // ritorna [hh:mm]
 };
+
+Clock operator+ (const Clock& c1, const Clock& c2);
+Clock operator- (const Clock& c1, const Clock& c2);
+bool operator> (const Clock& c1, const Clock& c2);
+bool operator>= (const Clock& c1, const Clock& c2);
+bool operator<= (const Clock& c1, const Clock& c2);
+bool operator< (const Clock& c1, const Clock& c2);
+bool operator== (const Clock& c1, const Clock& c2);
+bool operator!= (const Clock& c1, const Clock& c2);
 
 #endif
