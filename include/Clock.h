@@ -11,6 +11,7 @@ private:
 public:
     Clock(); //imposta l'orario a 0,0
     Clock(int hh, int mm); //inizializza l'orario se e' valido senno' lancia exception
+    Clock(std::string time);    //estrae da stringa hh e mm e chiama Clock(int, int)
     bool isActive();
     bool isValid(); //verifica se l'orario è "corretto" e se non lo è lancia eccezione e torna false
     Clock operator+ (Clock &time);

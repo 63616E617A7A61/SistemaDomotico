@@ -42,30 +42,46 @@ int main() {
 
             try {
                 std::string out;
-                if (vecInput[0] == "set") {     //c++ non supporta switch case con le string. se lo riteniamo necessario troverò una soluzione più carina
-                    if (vecInput[1] == "time") {    
-
+                if (vecInput.at(0) == "set") {     //c++ non supporta switch case con le string. se lo riteniamo necessario troverò una soluzione più carina
+                    if (vecInput.at(1) == "time") {    
+                        impianto.setTime(Clock(vecInput.at(2)));
+                    } else if (vecInput.at(2) == "on") {
+                        impianto.setOn(vecInput.at(1));
+                    } else if (vecInput.at(2) == "off") {
+                        impianto.setOff(vecInput.at(1));
+                    } else {
+                        if (vecInput.size() == 3) {
+                            impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)));
+                        } else {
+                            impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)), Clock(vecInput.at(3)));
+                        }
                     }
-                } else if (vecInput[0] == "rm") {
-
-                } else if (vecInput[0] == "show") {
-
-                } else if (vecInput[0] == "reset") {
-                    if (vecInput[1] == "time") {    
-
-                    } else if (vecInput[1] == "timers") {    
-
-                    } else if (vecInput[1] == "all") {    
-
+                } else if (vecInput.at(0) == "rm") {
+                    impianto.remove(vecInput.at(1));
+                } else if (vecInput.at(0) == "show") {
+                    if (vecInput.size() == 1) {
+                        impianto.show();
+                    } else {
+                        impianto.show(vecInput.at(1));
+                    }
+                } else if (vecInput.at(0) == "reset") {
+                    if (vecInput.at(1) == "time") {    
+                        impianto.resetTime();
+                    } else if (vecInput.at(1) == "timers") {    
+                        impianto.resetTimers();
+                    } else if (vecInput.at(1) == "all") {    
+                        impianto.resetAll();
+                    } else {
+                        throw std::invalid_argument("");
                     }
                 } else {
-                    throw std::invalid_argument("Input invalido riprova");
+                    throw std::invalid_argument("");
                 }
 
                 print(out, log);
-            } catch (const std::invalid_argument& e) {
-                std::cout << e.what() << std::endl;
-            } 
+            } catch (...) {
+                std::cout << "Input invalido\n, inserisci un nuovo comando\n";
+            }
         }    
         std::string endMsg = "Fine Giornata!";
         print(endMsg, log);
