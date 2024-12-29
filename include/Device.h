@@ -5,16 +5,18 @@
 #include "Clock.h"
 
 class Device{
+protected: 
+    Clock* timer;
 private:
     int ID;
     std::string name;
     float energy;
     float enTotal;
-    Clock timeOn;
-    Clock timer;
+    Clock* timeOn;
     bool active;
 public:
     Device(int id, std::string name, float energy);
+    Device(int id, std::string name, float energy, Clock timer);
     Device();
     std::string show();
     bool virtual check(Clock skipTime){return false;};
