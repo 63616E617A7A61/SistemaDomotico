@@ -1,3 +1,5 @@
+// TODO: gestione con smartpointer, controllo metodi 
+
 #include "../include/Device.h"
 #include <stdexcept>
 
