@@ -4,15 +4,15 @@
 #include <stdexcept>
 
 // CONSTRUCTORS
-// Used to create manual devices 
+// Used to create manual devices (manual devices don't have a default timer)
 Device::Device(int id, std::string name, float energy) : ID(id), name(name), energy(energy){
     enTotal = 0; 
     active = false; 
-    timeOn = nullptr; // Not initialized
-    timer = nullptr; // Not initialized
+    timeOn = nullptr; +
+    timer = nullptr; 
 }
 
-// Used to create auto devices
+// Used to create auto devices (auto devices have a default timer)
 Device::Device(int id, std::string name, float energy, Clock timer) : ID(id), name(name), energy(energy), timer(new Clock(timer)){
     enTotal = 0; 
     active = false; 
@@ -63,18 +63,21 @@ void Device::setEnTotal(float en){
 
 
 // SCHEDULE HANDLERS 
-// removeSchedule
+// removeSchedule (in order to remove the schedule remove the timeOn)
 void Device::removeSchedule(){
-    delete timeOn; // Delete the timeOn
-    timeOn = nullptr; 
+    if(timeOn != nullptr){
+        delete timeOn;
+        timeOn = nullptr; 
+    }
 }
 
 // setSchedule 
 void Device::setSchedule(Clock start){
-    if(timeOn != nullptr){ // If the device is already scheduled, throw an exception
+    // if the device is scheduled to an other time throw an exception
+    if(timeOn != nullptr){
         throw std::invalid_argument("Dispositivo non disponibile"); 
     }
-    timeOn = new Clock(start); // Set the timeOn 
+    timeOn = new Clock(start);
 }
 
 
@@ -82,23 +85,27 @@ void Device::setSchedule(Clock start){
 
 // TURN ON THE DEVICE 
 void Device::turnOn(Clock currTime){
-    // If the device is already active, throw an exception
+    // If the device is already on throw an exception
     if(active){
         throw std::invalid_argument("Dispositivo gia' acceso");
     }
-    timeOn = new Clock(currTime); // Set turn on time 
-    active = true; // Set the device as active
+    timeOn = new Clock(currTime);
+    active = true;
 }
 
 // TURN OFF THE DEVICE 
 void Device::turnOff(Clock currTime){
+    // If the device is already off throw an exception
     if(!active){
         throw std::invalid_argument("Dispositivo gia' spento");
     }
-    Clock time = currTime - *timeOn; // Calcolo il tempo di accensione
-    float hh = time.getHh() + time.getMm()/60; // Calcolo le ore di accensione   
-    enTotal += energy * hh; // Calcolo il consumo energetico
-    deactivate(); // Disattivo il dispositivo
+    // Calculate the time of power on (in hours)
+    Clock time = currTime - *timeOn; 
+    float hh = time.getHh() + time.getMm()/60; 
+    // Calculate the energy consumption
+    enTotal += energy * hh;
+    
+    deactivate(); 
 }
 
 
@@ -147,4 +154,6 @@ Device::~Device(){
     delete timer;
     delete timeOn;
 }
+
+
 
