@@ -34,6 +34,7 @@ std::string House::show(){
     }
     out += "Il sistema ha prodotto finora " + std::to_string(absorbed);
     out += "\nIl sistema ha consumato finora " + std::to_string(wasted);
+    return out;
 }
 
 std::string House::show(std::string name){
@@ -47,28 +48,14 @@ std::string House::show(std::string name){
 }
 
 std::string House::setTime(Clock skipTime){
-    try{
-        if(!skipTime.isValid()){
-            return "L'orario inserito non e' valido";
-        }    
-    }
-    catch(const std::exception& e){
-        return "L'orario inserito non e' valido";
-    }
-
     std::multimap<Clock, std::pair<Device&, bool>> events;  //bool serve da flag true se e' un accensione, false se e' uno spegnimento
     for(Device i : devices){  // costruisco la mappa con tutti gli eventi ordinati
         if(i.check(skipTime)) {
             if(i.getTimeOn() > currTime){ //evento on
                 events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn(), std::pair<Device&, bool>(i, true)));
                 // se il dispositivo in quel lasso di tempo si accende ma si spegne anche
-                try{
-                    if(i.getTimer().isValid() && (i.getTimeOn() + i.getTimer() <= skipTime)){
-                        events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn() + i.getTimer(), std::pair<Device&, bool>(i, false)));
-                    }
-                }
-                catch(const std::exception& e){
-                    continue; // vuol dire che non ha un timer valido (nullpntr)
+                if(&i.getTimer() != nullptr && (i.getTimeOn() + i.getTimer() <= skipTime)){
+                    events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn() + i.getTimer(), std::pair<Device&, bool>(i, false)));
                 }
             }else {  //evento off
                 events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn() + i.getTimer(), std::pair<Device&, bool>(i, false)));
