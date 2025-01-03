@@ -1,9 +1,11 @@
 #include "../include/Auto.h"
 
 // CONSTRUCTORS
-Auto::Auto(int id, std::string name, float energy, Clock timer) : Device(id, name, energy, timer){}
+Auto::Auto(int id, std::string name, float energy, Clock timer) : Device(id, name, energy, timer){
+    this->timer = new Clock(timer);
+}
 
-// CHECK (Caso on-off-on e off-on-off gestisce house?)
+// CHECK 
 bool Auto::check(Clock skipTime){
     if((Device::getTimeOn() <= skipTime && skipTime <= Device::getTimeOn() + Device::getTimer()) && !Device::isActive()){ // Device turn on
         Device::turnOn(skipTime);
@@ -14,4 +16,8 @@ bool Auto::check(Clock skipTime){
         return true;
     }
     return false; // No action
+}
+
+Auto::~Auto() {
+    delete timer; 
 }

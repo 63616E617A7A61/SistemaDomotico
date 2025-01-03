@@ -5,6 +5,11 @@ Manual::Manual(int id, std::string name, float energy) : Device(id, name, energy
 
 // CHECK (Caso on-off-on e off-on-off gestisce house?)
 bool Manual::check(Clock skipTime){
+    if(skipTime >= Clock(23, 59) && Device::isActive()){ // Device turn off at 23:59
+        Device::turnOff(skipTime);
+        return true;
+    }
+    
     if((Device::getTimeOn() <= skipTime && skipTime <= Device::getTimeOn() + Device::getTimer()) && !Device::isActive()){ // Device turn on
         Device::turnOn(skipTime);
         return true;
@@ -22,4 +27,8 @@ void Manual::setTimer(Clock timer){
         throw std::invalid_argument("Timer gia' impostato");
     }
     Device::timer = new Clock(timer);
+}
+
+Manual::~Manual() {
+    delete timer; 
 }

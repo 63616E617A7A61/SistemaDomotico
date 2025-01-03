@@ -18,7 +18,7 @@ public:
     Device(int id, std::string name, float energy);
     Device(int id, std::string name, float energy, Clock timer);
     Device();
-    std::string show();
+    std::string show(Clock currentTime);
     bool virtual check(Clock skipTime){return false;};
     void turnOn(Clock currTime);
     void turnOff(Clock currTime); //spegne il dispositivo calcola i consumi e chiama deactivate()

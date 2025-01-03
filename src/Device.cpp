@@ -11,13 +11,6 @@ Device::Device(int id, std::string name, float energy) : ID(id), name(name), ene
     timer = nullptr; 
 }
 
-// Used to create auto devices (auto devices have a default timer)
-Device::Device(int id, std::string name, float energy, Clock timer) : ID(id), name(name), energy(energy), timer(new Clock(timer)){
-    enTotal = 0; 
-    active = false; 
-    timeOn = nullptr; // Not initialized
-}
-
 std::string Device::getName(){
     return name;
 }
@@ -92,11 +85,12 @@ void Device::turnOff(Clock currTime){
 
 
 
-std::string Device::show(){
+std::string Device::show(Clock currentTime){
+    float energy = enTotal + (active ? energy * ((currentTime - *timeOn).getHh() +(currentTime - *timeOn).getMm()) : 0);
     if(enTotal > 0){
-        return "Il dispositivo " + name + " ha prodotto " + std::to_string(enTotal) + " Wh";
+        return "Il dispositivo " + name + " ha prodotto " + std::to_string(energy) + " Wh";
     }
-    return "Il dispositivo " + name + " ha consumato " + std::to_string(enTotal) + " Wh";
+    return "Il dispositivo " + name + " ha consumato " + std::to_string(energy) + " Wh";
 }
 
 void Device::deactivate(){
