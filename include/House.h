@@ -14,6 +14,7 @@ private:
     const float grid;
     float currEnCost;
     Clock currTime;
+    bool active;
 
     Device search(std::string name);
     bool checkOvrload();
@@ -21,7 +22,7 @@ private:
     void deactivateDevice(Device d);
 public:
     House(float grid);
-    bool isActive();    //necessario per il loop del main
+    bool isActive() {return active;};    //necessario per il loop del main
     std::string show();
     std::string show(std::string name);
     std::string setTime(Clock skipTime);

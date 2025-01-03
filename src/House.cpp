@@ -19,6 +19,7 @@ o un argomento da riga di comando) ed è pari a 3,5kW.
 */
 House::House(float maxPower) : grid(maxPower){
     currEnCost = 0;
+    active = true;
 }
 
 std::string House::show(){
@@ -48,6 +49,10 @@ std::string House::show(std::string name){
 }
 
 std::string House::setTime(Clock skipTime){
+    if (skipTime<currTime) {
+        active = false;
+        skipTime = Clock(23, 59);
+    }
     std::multimap<Clock, std::pair<Device&, bool>> events;  //bool serve da flag true se e' un accensione, false se e' uno spegnimento
     for(Device i : devices){  // costruisco la mappa con tutti gli eventi ordinati
         if(i.check(skipTime)) {

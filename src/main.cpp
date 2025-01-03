@@ -82,7 +82,7 @@ int main() {
 
                 print(out, log);
             } catch (...) {
-                out = "Input invalido\n, inserisci un nuovo comando\n";
+                out = "Input invalido,\ninserisci un nuovo comando\n";
                 print(out, log);
             }
         }    
