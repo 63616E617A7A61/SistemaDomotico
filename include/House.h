@@ -9,14 +9,14 @@
 
 class House{
 private:
-    std::vector<Device> devices;
-    std::vector<Device> activeD;
+    std::vector<Device*> devices;
+    std::vector<Device*> activeD;
     const float grid;
     float currEnCost;
     Clock currTime;
     bool active;
 
-    Device search(std::string name);
+    Device* search(std::string name);
     bool checkOvrload();
     bool isManual(Device d);
     void deactivateDevice(Device d);

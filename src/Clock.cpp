@@ -35,7 +35,9 @@ void Clock::setMm(int mm) {
 }
 
 std::string Clock::toString() {
-    return "[" + this->hh + ':' + this->mm + ']';
+    std::string h = (hh < 10) ? "0" : "";
+    std::string m = (mm < 10) ? "0" : "";
+    return "[" + h + std::to_string(hh) + ':' + m + std::to_string(mm) + ']';
 }
 
 Clock operator+ (const Clock& c1, const Clock& c2) {

@@ -16,7 +16,7 @@ void print(std::string& out, std::fstream& log) { //funzione di utility, stampa 
 int main() {
     const int gridPower = 3.5; //da stabilire se questo valore lo teniamo fisso o lo faccimao inserire all'utente
     House impianto(gridPower);
-    impianto.loadsDevices("../devices.txt");
+    std::cout << impianto.loadsDevices("devices.txt") << std::endl;
 
     std::string logFileName = ".txt";
     time_t currUnix;    //crea oggetto capace di contenere il tempo
@@ -28,18 +28,31 @@ int main() {
         std::string strInput;
         std::vector<std::string> vecInput;
         while(impianto.isActive()) {
+            vecInput.clear();
             std::getline(std::cin, strInput);   //ottiene in input la riga intera
             log << "Input: " << strInput;       //la salva in una riga del file
             int i = 0, j = 1;
-            while(j <= strInput.length()) {
-                if(strInput[j] == ' ' || j == strInput.length()) {
-                    vecInput.push_back(strInput.substr(i, j));  //la separa in parole
-                    j++;
-                    i = j++;
+
+            // while(j <= strInput.length()) {
+            //     if(strInput[j] == ' ' || j == strInput.length()) {
+            //         vecInput.push_back(strInput.substr(i, j));  //la separa in parole
+            //         j++;
+            //         i = j++;
+            //     } else {
+            //         j++;
+            //     }
+            // }
+
+            std::string buff = "";
+            for (char i : strInput) {  // split 
+                if (i == ' ') {
+                    vecInput.push_back(buff);
+                    buff = "";
                 } else {
-                    j++;
+                    buff += i;
                 }
             }
+            vecInput.push_back(buff);
 
             std::string out = "";
             try {

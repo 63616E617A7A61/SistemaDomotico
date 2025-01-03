@@ -7,9 +7,11 @@
 #include <map>
 #include <fstream>
 #include <cmath>
+#include <iostream>
 
 /* TODO PER ME:
 - tradurre tutto in inglese
+- currTime to string e file log
 */
 
 /*
@@ -26,12 +28,12 @@ std::string House::show(){
     std::string out = "";
     float absorbed = 0;
     float wasted = 0;
-    for(Device d : devices){
-        out += d.show() + "\n";
-        if (d.getEnTotal() < 0)
-            wasted += d.getEnTotal();
+    for(Device* d : devices){
+        out += d->show() + "\n";
+        if (d->getEnTotal() < 0)
+            wasted += d->getEnTotal();
         else
-            absorbed += d.getEnTotal();
+            absorbed += d->getEnTotal();
     }
     out += "Il sistema ha prodotto finora " + std::to_string(absorbed);
     out += "\nIl sistema ha consumato finora " + std::to_string(wasted);
@@ -40,8 +42,8 @@ std::string House::show(){
 
 std::string House::show(std::string name){
     try {
-        Device d = search(name);
-        return d.show();   
+        Device* d = search(name);
+        return d->show();   
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
@@ -53,34 +55,34 @@ std::string House::setTime(Clock skipTime){
         active = false;
         skipTime = Clock(23, 59);
     }
-    std::multimap<Clock, std::pair<Device&, bool>> events;  //bool serve da flag true se e' un accensione, false se e' uno spegnimento
-    for(Device i : devices){  // costruisco la mappa con tutti gli eventi ordinati
-        if(i.check(skipTime)) {
-            if(i.getTimeOn() > currTime){ //evento on
-                events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn(), std::pair<Device&, bool>(i, true)));
+    std::multimap<Clock, std::pair<Device*, bool>> events;  //bool serve da flag true se e' un accensione, false se e' uno spegnimento
+    for(Device* i : devices){  // costruisco la mappa con tutti gli eventi ordinati
+        if(i->check(skipTime)) {
+            if(i->getTimeOn() > currTime){ //evento on
+                events.insert(std::pair<Clock, std::pair<Device*, bool>>(i->getTimeOn(), std::pair<Device*, bool>(i, true)));
                 // se il dispositivo in quel lasso di tempo si accende ma si spegne anche
-                if(i.getTimer() != nullptr && (i.getTimeOn() + i.getTimer() <= skipTime)){
-                    events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn() + i.getTimer(), std::pair<Device&, bool>(i, false)));
+                if(i->getTimer() != nullptr && (i->getTimeOn() + i->getTimer() <= skipTime)){
+                    events.insert(std::pair<Clock, std::pair<Device*, bool>>(i->getTimeOn() + i->getTimer(), std::pair<Device*, bool>(i, false)));
                 }
             }else {  //evento off
-                events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn() + i.getTimer(), std::pair<Device&, bool>(i, false)));
+                events.insert(std::pair<Clock, std::pair<Device*, bool>>(i->getTimeOn() + i->getTimer(), std::pair<Device*, bool>(i, false)));
             }
         }
     }
 
     std::string out = "";
 
-    for(std::pair<Clock, std::pair<Device&, bool>> i : events){ //esegue gli eventi in ordine
+    for(std::pair<Clock, std::pair<Device*, bool>> i : events){ //esegue gli eventi in ordine
         Clock key = i.first;
-        Device& value = i.second.first;
+        Device* value = i.second.first;
         bool flag = i.second.second;
         std::string out = "";
 
         currTime = key;
         if(flag){ // evento on
-            out += setOn(value.getName());
+            out += setOn(value->getName());
         }else{ //evento off
-            out += setOff(value.getName());
+            out += setOff(value->getName());
         }
         out += "\n";
     }
@@ -100,21 +102,21 @@ assorbita minore di quella prodotta, riportando a schermo le azioni eseguite.
 std::string House::setOn(std::string name){
     try {
         std::string out = "";
-        Device d = search(name);
-        if(d.isActive()){
-            return "Dispositivo " + d.getName() + " e' gia' acceso";
+        Device* d = search(name);
+        if(d->isActive()){
+            return "Dispositivo " + d->getName() + " e' gia' acceso";
         }
-        d.turnOn(currTime);
-        currEnCost += d.getEnergy();
+        d->turnOn(currTime);
+        currEnCost += d->getEnergy();
         activeD.push_back(d);
-        out += currTime.toString() + " Dispositivo " + d.getName() + " acceso";
+        out += currTime.toString() + " Dispositivo " + d->getName() + " acceso";
         //controllo se energicamente è tutto ok
         if(checkOvrload()) out += "\nIl systema e' in sovraccarico!";
-        while (checkOvrload()){
-            Device r = activeD[0];
+        while (checkOvrload()){ //DA SISTEMARE
+            Device r = *activeD[0];
             r.turnOff(currTime);
             currEnCost -= r.getEnergy();
-            out += "\n" + currTime.toString() + " Dispositivo " + d.getName() + " spento";
+            out += "\n" + currTime.toString() + " Dispositivo " + d->getName() + " spento";
             deactivateDevice(r); // cancella il primo elemento
         }
         return out;
@@ -126,14 +128,14 @@ std::string House::setOn(std::string name){
 
 std::string House::setOff(std::string name){
     try {
-        Device d = search(name);
-        if(!d.isActive()){
-            return "Dispositivo " + d.getName() + " e' gia' spento";
+        Device* d = search(name);
+        if(!d->isActive()){
+            return "Dispositivo " + d->getName() + " e' gia' spento";
         }
-        d.turnOff(currTime);
-        currEnCost -= d.getEnergy();
-        deactivateDevice(d); //rimuove d da activeD
-        return currTime.toString() + " Dispositivo " + d.getName() + " spento";
+        d->turnOff(currTime);
+        currEnCost -= d->getEnergy();
+        deactivateDevice(*d); //rimuove d da activeD
+        return currTime.toString() + " Dispositivo " + d->getName() + " spento";
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
@@ -143,10 +145,10 @@ std::string House::setOff(std::string name){
 //SOLO DISPOSITIVI MANUAL (per scelta)
 std::string House::remove(std::string name){
     try {
-        Device d = search(name);
-        if (isManual(d)){
-            d.removeTimer();
-            return "Timer rimosso con successo da: " + d.getName();
+        Device* d = search(name);
+        if (isManual(*d)){
+            d->removeTimer();
+            return "Timer rimosso con successo da: " + d->getName();
         }else{
             return "Impossibile rimuovere il timer a un device a ciclo prefissato";
         }
@@ -159,12 +161,12 @@ std::string House::remove(std::string name){
 //PER EVITARE BUG NOTEVOLI NEL SET TIME SI PUO' FARE SOLO SE IL DISPOSITIVO E' SPENTO
 std::string House::setScheduledOn(std::string name, Clock start){
     try {
-        Device d = search(name);
-        if(d.isActive())
+        Device* d = search(name);
+        if(d->isActive())
             return "Impossibile impostare un orario di accensione ad un dispositivo gia' acceso";
 
-        d.setSchedule(start);
-        return "Impostato correttamente l'orario di accensione al dispositivo " + d.getName();   
+        d->setSchedule(start);
+        return "Impostato correttamente l'orario di accensione al dispositivo " + d->getName();   
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
@@ -175,9 +177,9 @@ std::string House::setScheduledOn(std::string name, Clock start){
 //PER EVITARE BUG NOTEVOLI NEL SET TIME SI PUO' FARE SOLO SE IL DISPOSITIVO E' SPENTO
 std::string House::setScheduledOn(std::string name, Clock start, Clock stop){
     try {
-        Device d = search(name);
-        if (isManual(d)){
-            Manual* derivedPtr = dynamic_cast<Manual*>(&d);
+        Device* d = search(name);
+        if (isManual(*d)){
+            Manual* derivedPtr = dynamic_cast<Manual*>(d);
             try {  // per vedere se l'orario è valido o no
                 if(derivedPtr->isActive())
                     return "Impossibile impostare un orario di accensione ad un dispositivo gia' acceso";
@@ -207,10 +209,10 @@ Gli eventuali timer aggiunti dopo l’avvio del systema vengono mantenuti.
 */
 std::string House::resetTime(){
     currTime.reset();
-    for(Device d : devices){
-        d.deactivate();
-        d.setEnTotal(0);
-        d.removeSchedule();
+    for(Device* d : devices){
+        d->deactivate();
+        d->setEnTotal(0);
+        d->removeSchedule();
     }
     return "Resettato tempo del systema, riportati tutti i dispositivi allo stato di partenza";
 }
@@ -224,8 +226,8 @@ NOTA TOMMI:
 auto o manual.
 */
 std::string House::resetTimers(){
-    for(Device d : devices){
-        d.removeTimer();
+    for(Device* d : devices){
+        d->removeTimer();
     }
     return "Rimossi tutti i timer di tutti i dispositivi";
 }
@@ -246,38 +248,40 @@ std::string House::resetAll(){
 FUNZIONE POPOLA DEVICES CHE RICEVE COME PARAMETRO UNA STRINGA CON UN PATH (FILE.TXT) 
 E LEGGE UN FILE CON TUTTE LE SPECIFICHE DEI DEVICE E POPOLA IL VETTORE
 */
-std::string House::loadsDevices(const std::string& filePath){
+std::string House::loadsDevices(const std::string& filePath) {
     Id sys;
     std::ifstream file(filePath);
 
     if (!file.is_open()) {
         return "Errore nell'apertura del file " + filePath;
     }
-
+    
     std::string line;
     while (std::getline(file, line)) {
         std::vector<std::string> words;
         std::string buff = "";
-        for(char i : line){  // split 
+        for (char i : line) {  // split 
             if (i == ',' || i == ':') {
                 words.push_back(buff);
                 buff = "";
-            }else{
+            } else {
                 buff += i;
             }
         }
         words.push_back(buff);
-        
-        if(words.size() > 2) {  // e' auto
-            try{
-                Clock c(std::stoi(words[1]), std::stoi(words[2]));   
-                devices.push_back(Auto(sys.getId(), words[0], std::stof(words[3]), c));
+
+        if (words.size() > 2) {  // è auto
+            try {
+                Clock c(std::stoi(words[1]), std::stoi(words[2]));
+                Auto* a = new Auto(sys.getId(), words[0], std::stof(words[3]), c);
+                devices.push_back(a);
+            } catch(const std::exception& e) {
+                file.close();
+                throw std::invalid_argument("ahahahahah");
             }
-            catch(const std::exception& e) {
-                return "Errore nel data set del file: " + line;
-            }
-        }else{ // e' manual
-            devices.push_back(Manual(sys.getId(), words[0], std::stof(words[1])));
+        } else { // è manual
+            Manual* m = new Manual(sys.getId(), words[0], std::stof(words[1]));
+            devices.push_back(m);
         }
     }
 
@@ -285,9 +289,9 @@ std::string House::loadsDevices(const std::string& filePath){
     return "Inizializzato correttamente tutti i dispositivi";
 }
 
-Device House::search(std::string name){
-    for (Device d : devices){
-        if(d.getName() == name){
+Device* House::search(std::string name){
+    for (Device* d : devices){
+        if(d->getName() == name){
             return d;
         }
     }
@@ -320,7 +324,7 @@ bool House::isManual(Device d){ // testato (funziona) non lancia eccezioni
 //Testata, rimuove d da activeD
 void House::deactivateDevice(Device d){  
     for(auto i = activeD.begin(); i != activeD.end(); ){
-        if (i->getName() == d.getName() && i->getId() == d.getId()) {
+        if ((*i)->getName() == d.getName() && (*i)->getId() == d.getId()) {
             i = activeD.erase(i);
         }else{  // senno' non cancella l'ultimo
             ++i;
