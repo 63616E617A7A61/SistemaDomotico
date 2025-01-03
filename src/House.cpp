@@ -11,7 +11,7 @@
 
 /* TODO PER ME:
 - tradurre tutto in inglese
-- currTime to string e file log
+- stringhe log
 */
 
 /*
@@ -24,26 +24,34 @@ House::House(float maxPower) : grid(maxPower){
     active = true;
 }
 
+/*
+[13:00] Attualmente il sistema ha prodotto XX kWh
+e consumato YY kWh. Nello specifico:
+- Il dispositivo ‘${DEVICENAME}’ ha
+consumato XX kWh
+- Il dispositivo ‘${DEVICENAME}’ ha
+consumato XX kWh
+*/
+
 std::string House::show(){
     std::string out = "";
     float absorbed = 0;
     float wasted = 0;
     for(Device* d : devices){
-        out += d->show() + "\n";
+        out += "- " + d->show() + "\n";
         if (d->getEnTotal() < 0)
             wasted += d->getEnTotal();
         else
             absorbed += d->getEnTotal();
     }
-    out += "Il sistema ha prodotto finora " + std::to_string(absorbed);
-    out += "\nIl sistema ha consumato finora " + std::to_string(wasted);
-    return out;
+    out.resize(out.size() - 2); // Eliminare gli ultimi due caratteri --> ovvero l'ultimo \n
+    return currTime.toString() + " Attualmente il sistema ha prodotto " + std::to_string(absorbed) + " kWh e consumato " + std::to_string(wasted) +" kWh. Nello specifico:\n" + out;
 }
 
 std::string House::show(std::string name){
     try {
         Device* d = search(name);
-        return d->show();   
+        return currTime.toString() + d->show();   
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
@@ -87,10 +95,7 @@ std::string House::setTime(Clock skipTime){
         out += "\n";
     }
 
-    // Eliminare gli ultimi due caratteri --> ovvero l'ultimo \n
-    out.resize(out.size() - 2);
-
-    return out; 
+    return out + getCurrentTime(); 
 }
 
 /*
@@ -111,13 +116,9 @@ std::string House::setOn(std::string name){
         activeD.push_back(d);
         out += currTime.toString() + " Dispositivo " + d->getName() + " acceso";
         //controllo se energicamente è tutto ok
-        if(checkOvrload()) out += "\nIl systema e' in sovraccarico!";
-        while (checkOvrload()){ //DA SISTEMARE
-            Device r = *activeD[0];
-            r.turnOff(currTime);
-            currEnCost -= r.getEnergy();
-            out += "\n" + currTime.toString() + " Dispositivo " + d->getName() + " spento";
-            deactivateDevice(r); // cancella il primo elemento
+        if(checkOvrload()){
+            out += "\nIl systema e' in sovraccarico!";
+            restoreEnergyLimit();
         }
         return out;
     }
@@ -127,6 +128,7 @@ std::string House::setOn(std::string name){
 }
 
 std::string House::setOff(std::string name){
+    std::string out = "";
     try {
         Device* d = search(name);
         if(!d->isActive()){
@@ -135,7 +137,12 @@ std::string House::setOff(std::string name){
         d->turnOff(currTime);
         currEnCost -= d->getEnergy();
         deactivateDevice(*d); //rimuove d da activeD
-        return currTime.toString() + " Dispositivo " + d->getName() + " spento";
+        out += currTime.toString() + " Dispositivo " + d->getName() + " spento";
+        if(checkOvrload()){
+            out += "\nIl systema e' in sovraccarico!";
+            restoreEnergyLimit();
+        }
+        return out;
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
@@ -143,12 +150,16 @@ std::string House::setOff(std::string name){
 }
 
 //SOLO DISPOSITIVI MANUAL (per scelta)
+/*
+[13:00] Rimosso il timer dal dispositivo
+‘${DEVICENAME}’
+*/
 std::string House::remove(std::string name){
     try {
         Device* d = search(name);
         if (isManual(*d)){
             d->removeTimer();
-            return "Timer rimosso con successo da: " + d->getName();
+            return currTime.toString() + " Rimosso il timer dal dispositivo " + d->getName();
         }else{
             return "Impossibile rimuovere il timer a un device a ciclo prefissato";
         }
@@ -166,7 +177,7 @@ std::string House::setScheduledOn(std::string name, Clock start){
             return "Impossibile impostare un orario di accensione ad un dispositivo gia' acceso";
 
         d->setSchedule(start);
-        return "Impostato correttamente l'orario di accensione al dispositivo " + d->getName();   
+        return currTime.toString() + " Impostato orario di accensione per il dispositivo " + d->getName() + " alle " + d->getTimeOn().toString();   
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
@@ -185,13 +196,14 @@ std::string House::setScheduledOn(std::string name, Clock start, Clock stop){
                     return "Impossibile impostare un orario di accensione ad un dispositivo gia' acceso";
 
                 derivedPtr->setTimer(start-stop); // Clock start - Clock stop = durata del "timer"
+                derivedPtr->setSchedule(start);
             }
             catch(const std::exception& e) {
                 delete derivedPtr; 
                 return "Orario di avvio/spegnimento non validi!";
             }
             delete derivedPtr; 
-            return "Impostato correttamente l'orario di accensione e di spegnimento";
+            return currTime.toString() + " Impostato un timer per il dispositivo " + d->getName() + " dalle " + start.toString() + " alle "+ stop.toString();
         }else{
             return "Impossibile rimuovere il imopostare l'orario di spegnimento ad un device a ciclo prefissato";
         }   
@@ -214,7 +226,7 @@ std::string House::resetTime(){
         d->setEnTotal(0);
         d->removeSchedule();
     }
-    return "Resettato tempo del systema, riportati tutti i dispositivi allo stato di partenza";
+    return getCurrentTime();
 }
 
 /*
@@ -335,4 +347,16 @@ void House::deactivateDevice(Device d){
             ++i;
         }
     }
+}
+
+std::string House::restoreEnergyLimit(){
+    std::string out = "";
+    while (checkOvrload()){ 
+        Device r = *activeD[activeD.size()-1];
+        r.turnOff(currTime);
+        currEnCost -= r.getEnergy();
+        out += "\n" + currTime.toString() + " Dispositivo " + r.getName() + " spento";
+        activeD.pop_back();
+    }
+    return out;
 }

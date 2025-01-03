@@ -20,6 +20,7 @@ private:
     bool checkOvrload();
     bool isManual(Device d);
     void deactivateDevice(Device d);
+    std::string restoreEnergyLimit();
 public:
     House(float grid);
     bool isActive() {return active;};    //necessario per il loop del main
