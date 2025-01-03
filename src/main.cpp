@@ -16,6 +16,7 @@ void print(std::string& out, std::fstream& log) { //funzione di utility, stampa 
 int main() {
     const int gridPower = 3.5; //da stabilire se questo valore lo teniamo fisso o lo faccimao inserire all'utente
     House impianto(gridPower);
+    impianto.loadsDevices("../devices.txt");
 
     std::string logFileName = ".txt";
     time_t currUnix;    //crea oggetto capace di contenere il tempo
@@ -42,6 +43,7 @@ int main() {
 
             std::string out = "";
             try {
+                
                 if (vecInput.at(0) == "set") {     //c++ non supporta switch case con le string. se lo riteniamo necessario troverò una soluzione più carina
                     if (vecInput.at(1) == "time") {    
                         out = impianto.setTime(Clock(vecInput.at(2)));
