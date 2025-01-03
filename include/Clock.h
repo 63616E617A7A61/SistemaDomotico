@@ -31,6 +31,8 @@ bool operator>= (const Clock& c1, const Clock& c2);
 bool operator<= (const Clock& c1, const Clock& c2);
 bool operator< (const Clock& c1, const Clock& c2);
 bool operator== (const Clock& c1, const Clock& c2);
+bool operator== (const Clock& c1, std::nullptr_t nptr);
 bool operator!= (const Clock& c1, const Clock& c2);
+bool operator!= (const Clock& c1, std::nullptr_t nptr);
 
 #endif

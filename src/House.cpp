@@ -54,7 +54,7 @@ std::string House::setTime(Clock skipTime){
             if(i.getTimeOn() > currTime){ //evento on
                 events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn(), std::pair<Device&, bool>(i, true)));
                 // se il dispositivo in quel lasso di tempo si accende ma si spegne anche
-                if(&i.getTimer() != nullptr && (i.getTimeOn() + i.getTimer() <= skipTime)){
+                if(i.getTimer() != nullptr && (i.getTimeOn() + i.getTimer() <= skipTime)){
                     events.insert(std::pair<Clock, std::pair<Device&, bool>>(i.getTimeOn() + i.getTimer(), std::pair<Device&, bool>(i, false)));
                 }
             }else {  //evento off

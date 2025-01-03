@@ -91,6 +91,14 @@ bool operator== (const Clock& c1, const Clock& c2) {
     return c1.getHh() == c2.getHh() && c1.getMm() == c2.getMm();
 }
 
+bool operator== (const Clock& c1, std::nullptr_t nptr) {
+    return c1 == nptr;
+}
+
 bool operator!= (const Clock& c1, const Clock& c2) {
     return !(c1 == c2);
+}
+
+bool operator!= (const Clock& c1, std::nullptr_t nptr) {
+    return c1 != nptr;
 }
