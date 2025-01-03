@@ -35,6 +35,7 @@ public:
     std::string resetTimers();
     std::string resetAll();
     std::string loadsDevices(const std::string& filePath);
+    std::string getCurrentTime();
 };
 
 #endif

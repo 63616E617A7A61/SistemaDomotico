@@ -289,6 +289,11 @@ std::string House::loadsDevices(const std::string& filePath) {
     return "Inizializzato correttamente tutti i dispositivi";
 }
 
+std::string House::getCurrentTime(){
+    std::string str = currTime.toString();
+    return str + " L'orario attuale e' " + str.substr(1, str.length()-2);
+}
+
 Device* House::search(std::string name){
     for (Device* d : devices){
         if(d->getName() == name){
