@@ -40,37 +40,37 @@ int main() {
                 }
             }
 
+            std::string out = "";
             try {
-                std::string out;
                 if (vecInput.at(0) == "set") {     //c++ non supporta switch case con le string. se lo riteniamo necessario troverò una soluzione più carina
                     if (vecInput.at(1) == "time") {    
-                        impianto.setTime(Clock(vecInput.at(2)));
+                        out = impianto.setTime(Clock(vecInput.at(2)));
                     } else if (vecInput.at(2) == "on") {
-                        impianto.setOn(vecInput.at(1));
+                        out = impianto.setOn(vecInput.at(1));
                     } else if (vecInput.at(2) == "off") {
-                        impianto.setOff(vecInput.at(1));
+                        out = impianto.setOff(vecInput.at(1));
                     } else {
                         if (vecInput.size() == 3) {
-                            impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)));
+                            out = impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)));
                         } else {
-                            impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)), Clock(vecInput.at(3)));
+                            out = impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)), Clock(vecInput.at(3)));
                         }
                     }
                 } else if (vecInput.at(0) == "rm") {
-                    impianto.remove(vecInput.at(1));
+                    out = impianto.remove(vecInput.at(1));
                 } else if (vecInput.at(0) == "show") {
                     if (vecInput.size() == 1) {
-                        impianto.show();
+                        out = impianto.show();
                     } else {
-                        impianto.show(vecInput.at(1));
+                        out = impianto.show(vecInput.at(1));
                     }
                 } else if (vecInput.at(0) == "reset") {
                     if (vecInput.at(1) == "time") {    
-                        impianto.resetTime();
+                        out = impianto.resetTime();
                     } else if (vecInput.at(1) == "timers") {    
-                        impianto.resetTimers();
+                        out = impianto.resetTimers();
                     } else if (vecInput.at(1) == "all") {    
-                        impianto.resetAll();
+                        out = impianto.resetAll();
                     } else {
                         throw std::invalid_argument("");
                     }
@@ -80,7 +80,8 @@ int main() {
 
                 print(out, log);
             } catch (...) {
-                std::cout << "Input invalido\n, inserisci un nuovo comando\n";
+                out = "Input invalido\n, inserisci un nuovo comando\n";
+                print(out, log);
             }
         }    
         std::string endMsg = "Fine Giornata!";
