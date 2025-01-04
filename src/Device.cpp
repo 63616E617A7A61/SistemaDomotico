@@ -84,10 +84,10 @@ void Device::turnOff(Clock currTime){
 }
 
 bool Device::check(Clock skipTime, Clock currTime){
-    if(timeOn != nullptr && (*timeOn <= skipTime && *timeOn > currTime) && !active){ // Device turn on | qua bisognerebbe controlloare se timeOn è maggiore di currTime (forse si puo gestire da house)
+    if(timeOn != nullptr && (*timeOn <= skipTime && *timeOn > currTime)){ // Device turn on | qua bisognerebbe controlloare se timeOn è maggiore di currTime (forse si puo gestire da house)
         return true;
     }
-    else if(timeOn != nullptr && timer != nullptr && (*timeOn + *timer) <= skipTime && active){ // Device turn off
+    else if(timeOn != nullptr && timer != nullptr && (*timeOn + *timer) <= skipTime){ // Device turn off
         return true;
     }
     return false; // No action

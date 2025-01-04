@@ -2,6 +2,6 @@
 
 // CONSTRUCTORS
 Auto::Auto(int id, std::string name, float energy, Clock timer) : Device(id, name, energy){
-    this->timer = &timer;
+    this->timer = new Clock(timer);
 }
 

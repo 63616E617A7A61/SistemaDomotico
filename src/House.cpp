@@ -79,7 +79,6 @@ std::string House::setTime(Clock skipTime){
         Clock key = i.first;
         Device* value = i.second.first;
         bool flag = i.second.second;
-        std::string out = "";
 
         currTime = key;
         if(flag){ // evento on
@@ -128,10 +127,12 @@ std::string House::setOff(std::string name){
     std::string out = "";
     try {
         Device* d = search(name);
-        if(!d->isActive()){
+        try{
+            d->turnOff(currTime);
+        }
+        catch(const std::exception& e) {
             return "Dispositivo " + d->getName() + " e' gia' spento";
         }
-        d->turnOff(currTime);
         currEnCost -= d->getEnergy();
         deactivateDevice(*d); //rimuove d da activeD
         out += currTime.toString() + " Dispositivo " + d->getName() + " spento";
@@ -294,6 +295,7 @@ std::string House::loadsDevices(const std::string& filePath) {
     }
 
     file.close();
+
     return "Inizializzato correttamente tutti i dispositivi";
 }
 
