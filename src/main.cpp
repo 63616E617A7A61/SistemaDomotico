@@ -10,7 +10,7 @@
 
 void print(std::string& out, std::fstream& log) { //funzione di utility, stampa l'output a schermo e lo salva nel file di log
     std::cout << out << std::endl;
-    log << out;
+    log << out << std::endl;
 }
 
 int main() {
@@ -18,10 +18,13 @@ int main() {
     House impianto(gridPower);
     std::cout << impianto.loadsDevices("devices.txt") << std::endl;
 
-    std::string logFileName = ".txt";
     time_t currUnix;    //crea oggetto capace di contenere il tempo
     time(&currUnix);    //setta currUnix al orario corrente
-    logFileName = ctime(&currUnix) + logFileName;   //setta il nome del file di log
+    tm* timeinfo;       //crfea un puntatore ad una struct necessaria a formattare unixTime
+    timeinfo = localtime (&currUnix);   //assegna l;orario corrente a timeinfo
+    int buffSize = 32;
+    char logFileName[buffSize];               //il nome del file di log sono sempre 25 caratteri + terminatore di stringa
+    strftime (logFileName,buffSize,".\\logs\\%Y.%m.%d %Hhh%Mmm.txt", timeinfo);    //formatta il nome del file di log
 
     try {
         std::fstream log(logFileName, std::fstream::out);
@@ -30,7 +33,7 @@ int main() {
         while(impianto.isActive()) {
             vecInput.clear();
             std::getline(std::cin, strInput);   //ottiene in input la riga intera
-            log << "Input: " << strInput;       //la salva in una riga del file
+            log << "Input: " << strInput << std::endl;       //la salva in una riga del file
             int i = 0, j = 1;
 
             // while(j <= strInput.length()) {
