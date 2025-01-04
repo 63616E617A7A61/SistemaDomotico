@@ -11,7 +11,6 @@
 
 /* TODO PER ME:
 - tradurre tutto in inglese
-- stringhe log
 */
 
 /*
@@ -25,33 +24,29 @@ House::House(float maxPower) : grid(maxPower){
 }
 
 /*
-[13:00] Attualmente il sistema ha prodotto XX kWh
-e consumato YY kWh. Nello specifico:
-- Il dispositivo ‘${DEVICENAME}’ ha
-consumato XX kWh
-- Il dispositivo ‘${DEVICENAME}’ ha
-consumato XX kWh
+[13:00] Attualmente il sistema ha prodotto XX kWh e consumato YY kWh. Nello specifico:
+- Il dispositivo ‘${DEVICENAME}’ ha consumato XX kWh
+- Il dispositivo ‘${DEVICENAME}’ ha consumato XX kWh
 */
-
 std::string House::show(){
     std::string out = "";
     float absorbed = 0;
     float wasted = 0;
     for(Device* d : devices){
-        out += "- " + d->show() + "\n";
+        out += "- " + d->show(currTime) + "\n";
         if (d->getEnTotal() < 0)
             wasted += d->getEnTotal();
         else
             absorbed += d->getEnTotal();
     }
-    out.resize(out.size() - 2); // Eliminare gli ultimi due caratteri --> ovvero l'ultimo \n
+    out.resize(out.size() - 1); // Eliminare gli ultimi due caratteri --> ovvero l'ultimo \n
     return currTime.toString() + " Attualmente il sistema ha prodotto " + std::to_string(absorbed) + " kWh e consumato " + std::to_string(wasted) +" kWh. Nello specifico:\n" + out;
 }
 
 std::string House::show(std::string name){
     try {
         Device* d = search(name);
-        return currTime.toString() + d->show();   
+        return currTime.toString() + d->show(currTime);   
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
@@ -65,12 +60,12 @@ std::string House::setTime(Clock skipTime){
     }
     std::multimap<Clock, std::pair<Device*, bool>> events;  //bool serve da flag true se e' un accensione, false se e' uno spegnimento
     for(Device* i : devices){  // costruisco la mappa con tutti gli eventi ordinati
-        if(i->check(skipTime)) {
+        if(i->check(skipTime, currTime)) {
             if(i->getTimeOn() > currTime){ //evento on
                 events.insert(std::pair<Clock, std::pair<Device*, bool>>(i->getTimeOn(), std::pair<Device*, bool>(i, true)));
                 // se il dispositivo in quel lasso di tempo si accende ma si spegne anche
-                if(i->getTimer() != nullptr && (i->getTimeOn() + i->getTimer() <= skipTime)){
-                    events.insert(std::pair<Clock, std::pair<Device*, bool>>(i->getTimeOn() + i->getTimer(), std::pair<Device*, bool>(i, false)));
+                if(i->getTimer() != nullptr && ((i->getTimeOn() + i->getTimer()) <= skipTime)){
+                    events.insert(std::pair<Clock, std::pair<Device*, bool>>((i->getTimeOn() + i->getTimer()), std::pair<Device*, bool>(i, false)));
                 }
             }else {  //evento off
                 events.insert(std::pair<Clock, std::pair<Device*, bool>>(i->getTimeOn() + i->getTimer(), std::pair<Device*, bool>(i, false)));
@@ -94,6 +89,8 @@ std::string House::setTime(Clock skipTime){
         }
         out += "\n";
     }
+
+    currTime = skipTime;
 
     return out + getCurrentTime(); 
 }
@@ -151,8 +148,7 @@ std::string House::setOff(std::string name){
 
 //SOLO DISPOSITIVI MANUAL (per scelta)
 /*
-[13:00] Rimosso il timer dal dispositivo
-‘${DEVICENAME}’
+[13:00] Rimosso il timer dal dispositivo ‘${DEVICENAME}’
 */
 std::string House::remove(std::string name){
     try {

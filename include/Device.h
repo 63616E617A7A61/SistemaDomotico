@@ -16,10 +16,9 @@ private:
     bool active;
 public:
     Device(int id, std::string name, float energy);
-    Device(int id, std::string name, float energy, Clock timer);
     Device();
     std::string show(Clock currentTime);
-    bool virtual check(Clock skipTime){return false;};
+    bool check(Clock skipTim, Clock currTime);
     void turnOn(Clock currTime);
     void turnOff(Clock currTime); //spegne il dispositivo calcola i consumi e chiama deactivate()
     // Device& operator=(const Device& other) = delete;  da problemi nella classe House.cpp

@@ -2,6 +2,7 @@
 
 #include "../include/Device.h"
 #include <stdexcept>
+#include <iostream>
 
 // Used to create manual devices (manual devices don't have a default timer)
 Device::Device(int id, std::string name, float energy) : ID(id), name(name), energy(energy){
@@ -82,7 +83,15 @@ void Device::turnOff(Clock currTime){
     deactivate(); 
 }
 
-
+bool Device::check(Clock skipTime, Clock currTime){
+    if(timeOn != nullptr && (*timeOn <= skipTime && *timeOn > currTime) && !active){ // Device turn on | qua bisognerebbe controlloare se timeOn è maggiore di currTime (forse si puo gestire da house)
+        return true;
+    }
+    else if(timeOn != nullptr && timer != nullptr && (*timeOn + *timer) <= skipTime && active){ // Device turn off
+        return true;
+    }
+    return false; // No action
+}
 
 
 std::string Device::show(Clock currentTime){
@@ -112,4 +121,3 @@ Device::~Device(){
     delete timer;
     delete timeOn;
 }
-

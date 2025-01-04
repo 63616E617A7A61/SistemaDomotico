@@ -8,7 +8,6 @@ private:
     
 public:
     Manual(int id, std::string name, float energy);
-    bool check(Clock skipTime);
     void setTimer(Clock timer);
 };
 
