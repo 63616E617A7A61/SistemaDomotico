@@ -24,7 +24,7 @@ int main() {
     timeinfo = localtime (&currUnix);   //assegna l;orario corrente a timeinfo
     int buffSize = 32;
     char logFileName[buffSize];               //il nome del file di log sono sempre 25 caratteri + terminatore di stringa
-    strftime (logFileName,buffSize,".\\logs\\%Y.%m.%d %Hhh%Mmm.txt", timeinfo);    //formatta il nome del file di log
+    strftime (logFileName, buffSize, "Log - %Y.%m.%d %Hhh%Mmm.txt", timeinfo);    //formatta il nome del file di log
 
     try {
         std::fstream log(logFileName, std::fstream::out);
