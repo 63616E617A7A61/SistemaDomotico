@@ -33,11 +33,13 @@ std::string House::show(){
     float absorbed = 0;
     float wasted = 0;
     for(Device* d : devices){
-        out += "- " + d->show(currTime) + "\n";
-        if (d->getEnTotal() < 0)
-            wasted += d->getEnTotal();
+        float en = d->show(currTime);
+        if(en > 0) out += "- Il dispositivo " + d->getName() + " ha prodotto " + std::to_string(en) + " Wh\n";
+        else out += "- Il dispositivo " + d->getName() + " ha consumato " + std::to_string(en) + " Wh\n";
+        if (en < 0)
+            wasted += en;
         else
-            absorbed += d->getEnTotal();
+            absorbed += en;
     }
     out.resize(out.size() - 1); // Eliminare gli ultimi due caratteri --> ovvero l'ultimo \n
     return currTime.toString() + " Attualmente il sistema ha prodotto " + std::to_string(absorbed) + " kWh e consumato " + std::to_string(wasted) +" kWh. Nello specifico:\n" + out;
@@ -46,7 +48,9 @@ std::string House::show(){
 std::string House::show(std::string name){
     try {
         Device* d = search(name);
-        return currTime.toString() + d->show(currTime);   
+        float en = d->show(currTime);
+        if(en > 0) return currTime.toString() + " Il dispositivo " + d->getName() + " ha prodotto " + std::to_string(en) + " Wh";
+        else return currTime.toString() + " Il dispositivo " + d->getName() + " ha consumato " + std::to_string(en) + " Wh";
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";

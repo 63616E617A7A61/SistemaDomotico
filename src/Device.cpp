@@ -94,12 +94,13 @@ bool Device::check(Clock skipTime, Clock currTime){
 }
 
 
-std::string Device::show(Clock currentTime){
-    float energy = enTotal + (active ? energy * ((currentTime - *timeOn).getHh() +(currentTime - *timeOn).getMm()) : 0);
-    if(enTotal > 0){
-        return "Il dispositivo " + name + " ha prodotto " + std::to_string(energy) + " Wh";
-    }
-    return "Il dispositivo " + name + " ha consumato " + std::to_string(energy) + " Wh";
+float Device::show(Clock currentTime){
+    float tmpEn = enTotal + (active ? energy * ((currentTime - *timeOn).getHh() +(currentTime - *timeOn).getMm()) : 0);
+    // if(enTotal > 0 || tmpEn > 0){
+    //     return "Il dispositivo " + name + " ha prodotto " + std::to_string(tmpEn) + " Wh";
+    // }
+    // return "Il dispositivo " + name + " ha consumato " + std::to_string(tmpEn) + " Wh";
+    return tmpEn;
 }
 
 void Device::deactivate(){
