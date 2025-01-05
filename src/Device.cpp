@@ -2,7 +2,6 @@
 
 #include "../include/Device.h"
 #include <stdexcept>
-#include <iostream>
 
 // Used to create manual devices (manual devices don't have a default timer)
 Device::Device(int id, std::string name, float energy) : ID(id), name(name), energy(energy){
@@ -28,12 +27,15 @@ int Device::getId(){
     return ID;
 }
 
-Clock Device::getTimeOn(){
-    return *timeOn;
+/*
+tipo di ritorno modificato cosi si puo' controllare da classi esterne se getTimeOn() != nullptr
+*/
+Clock* Device::getTimeOn(){
+    return timeOn;
 }
 
-Clock Device::getTimer(){
-    return *timer;
+Clock* Device::getTimer(){
+    return timer;
 }
 
 void Device::setEnTotal(float en){
@@ -64,22 +66,22 @@ void Device::setSchedule(Clock start){
 
 void Device::turnOn(Clock currTime){
     // If the device is already on 
-    if(active){
-        throw std::invalid_argument("Dispositivo gia' acceso");
-    }
-    timeOn = new Clock(currTime);
+    // if(active == true){
+    //     throw std::invalid_argument("Dispositivo gia' acceso");
+    // }
     active = true;
+    timeOn = new Clock(currTime);
 }
 
 void Device::turnOff(Clock currTime){
     // If the device is already off 
-    if(!active){
-        throw std::invalid_argument("Dispositivo gia' spento");
-    }
+    // if(active == false){
+    //     throw std::invalid_argument("Dispositivo gia' spento");
+    // }
     Clock time = currTime - *timeOn; 
     float hh = time.getHh() + time.getMm()/60; 
     enTotal += energy * hh;
-    
+
     deactivate(); 
 }
 
@@ -121,4 +123,6 @@ void Device::removeTimer(){
 Device::~Device(){
     delete timer;
     delete timeOn;
+    timeOn = nullptr;
+    timer = nullptr;
 }

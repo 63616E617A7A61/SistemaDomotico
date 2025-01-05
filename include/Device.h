@@ -26,8 +26,8 @@ public:
     float getEnTotal();
     float getEnergy();
     int getId();
-    Clock getTimeOn();
-    Clock getTimer();
+    Clock* getTimeOn();
+    Clock* getTimer();
     void deactivate(); // set active to false
     void setEnTotal(float val);
     void removeSchedule(); // svuota timeOn

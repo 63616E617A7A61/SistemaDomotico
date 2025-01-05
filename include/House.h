@@ -10,7 +10,7 @@
 class House{
 private:
     std::vector<Device*> devices;
-    std::vector<Device*> activeD;
+    std::vector<int> activeD;
     const float grid;
     float currEnCost;
     Clock currTime;
@@ -19,8 +19,9 @@ private:
     Device* search(std::string name);
     bool checkOvrload();
     bool isManual(Device d);
-    void deactivateDevice(Device d);
     std::string restoreEnergyLimit();
+    int getDevIndex(std::string name);
+    void deactivateDevice(std::string name);
 public:
     House(float grid);
     bool isActive() {return active;};    //necessario per il loop del main
