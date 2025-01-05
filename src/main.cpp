@@ -14,7 +14,7 @@ void print(std::string& out, std::fstream& log) { //funzione di utility, stampa 
 }
 
 int main() {
-    const int gridPower = 3.5; //da stabilire se questo valore lo teniamo fisso o lo faccimao inserire all'utente
+    const float gridPower = 3.5; //da stabilire se questo valore lo teniamo fisso o lo faccimao inserire all'utente
     House impianto(gridPower);
     std::cout << impianto.loadsDevices("devices.txt") << std::endl;
 

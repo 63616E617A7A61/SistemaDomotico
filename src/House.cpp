@@ -7,9 +7,11 @@
 #include <map>
 #include <fstream>
 #include <cmath>
+#include <iostream>
 
 /* TODO PER ME:
-- tradurre tutto in inglese
+- commentare matodi in inglese
+- return Clock* getTimeOn() non xe massa ben
 */
 
 /*
@@ -230,7 +232,6 @@ std::string House::resetTime(){
     for(Device* d : devices){
         d->deactivate();
         d->setEnTotal(0);
-        d->removeSchedule();
     }
     return getCurrentTime();
 }
@@ -320,16 +321,16 @@ Device* House::search(std::string name){
 }
     
 bool House::checkOvrload(){ // vero se c'è overload, falso se è tutto ok
-    return abs(currEnCost) > grid; //in c++ in <cmath> abs fa overload per tutti i tipi ti dato primitivo
+    return fabs(currEnCost) > grid; //in c++ in <cmath> abs fa overload per tutti i tipi ti dato primitivo
 }
 
 std::string House::restoreEnergyLimit(){
     std::string out = "";
     while (checkOvrload()){ 
-        Device r = *devices[activeD[activeD.size()-1]];
-        r.turnOff(currTime);
-        currEnCost -= r.getEnergy();
-        out += "\n" + currTime.toString() + " Dispositivo " + r.getName() + " spento";
+        Device* r = devices[activeD[activeD.size()-1]];
+        r->turnOff(currTime);
+        currEnCost -= r->getEnergy();
+        out += "\n" + currTime.toString() + " Dispositivo " + r->getName() + " spento";
         activeD.pop_back();
     }
     return out;
