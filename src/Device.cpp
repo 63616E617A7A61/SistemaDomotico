@@ -30,12 +30,19 @@ int Device::getId(){
 /*
 tipo di ritorno modificato cosi si puo' controllare da classi esterne se getTimeOn() != nullptr
 */
-Clock* Device::getTimeOn(){
-    return timeOn;
+Clock Device::getTimeOn(){
+    return *timeOn;
 }
 
-Clock* Device::getTimer(){
-    return timer;
+Clock Device::getTimer(){
+    return *timer;
+}
+
+bool Device::timerExist(){
+    if (timer != nullptr){
+        return true;
+    }
+    return false;
 }
 
 void Device::setEnTotal(float en){

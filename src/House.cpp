@@ -7,28 +7,20 @@
 #include <map>
 #include <fstream>
 #include <cmath>
-#include <iostream>
 
-/* TODO PER ME:
-- commentare matodi in inglese
-- return Clock* getTimeOn() non xe massa ben
-*/
-
-/*
-Il limite massimo di potenza che si può assorbire dalla rete è fornito in
-fase di inizializzazione al systema (tramite una costante definita nel codice 
-o un argomento da riga di comando) ed è pari a 3,5kW.
+/** 
+ * @brief Constructor for the House class. 
+ * @param maxPower The maximum power the house grid can handle. 
 */
 House::House(float maxPower) : grid(maxPower){
     currEnCost = 0;
     active = true;
 }
 
-/*
-[13:00] Attualmente il sistema ha prodotto XX kWh e consumato YY kWh. Nello specifico:
-- Il dispositivo ‘${DEVICENAME}’ ha consumato XX kWh
-- Il dispositivo ‘${DEVICENAME}’ ha consumato XX kWh
-*/
+/**
+ * @brief Shows the current status of all devices in the house. 
+ * @return A string representing the current status of all devices.
+ */
 std::string House::show(){
     std::string out = "";
     float absorbed = 0;
@@ -42,10 +34,15 @@ std::string House::show(){
         else
             absorbed += en;
     }
-    out.resize(out.size() - 1); // Eliminare gli ultimi due caratteri --> ovvero l'ultimo \n
+    out.resize(out.size() - 1);
     return currTime.toString() + " Attualmente il sistema ha prodotto " + std::to_string(absorbed) + " kWh e consumato " + std::to_string(wasted) +" kWh. Nello specifico:\n" + out;
 }
 
+/**
+ * @brief Shows the current status of a specific device. 
+ * @param name The name of the device. 
+ * @return A string representing the current status of the specified device.
+ */
 std::string House::show(std::string name){
     try {
         Device* d = search(name);
@@ -58,37 +55,46 @@ std::string House::show(std::string name){
     }
 }
 
+/**
+ * @brief Sets the time for the house system. 
+ * @param skipTime The time to set. 
+ * @return A string representing the events that occurred during the time skip.
+ */
 std::string House::setTime(Clock skipTime){
     if (skipTime<currTime) {
         active = false;
         skipTime = Clock(23, 59);
     }
-    std::multimap<Clock, std::pair<Device*, bool>> events;  //bool serve da flag true se e' un accensione, false se e' uno spegnimento
-    for(Device* i : devices){  // costruisco la mappa con tutti gli eventi ordinati  
+    /*
+    I use a multimap with a key a Clock that represents the time at which an event must be resolved, 
+    and with a value a pair given by a device where to operate an on or off and a boolean value that represents the type of event, precisely on or off. 
+    The multimap is a data structure that orders the elements inside it based on the key so that then the resolution of the events becomes trivial, in a way unrelated to time.
+    */
+    std::multimap<Clock, std::pair<Device*, bool>> events; 
+    for(Device* i : devices){   
         if(i->check(skipTime, currTime)) {
-            if(*(i->getTimeOn()) > currTime){ //evento on
-                events.insert(std::pair<Clock, std::pair<Device*, bool>>(*i->getTimeOn(), std::pair<Device*, bool>(i, true)));
-                // se il dispositivo in quel lasso di tempo si accende ma si spegne anche
-                if(i->getTimer() != nullptr && ((*i->getTimeOn() + *i->getTimer()) <= skipTime)){
-                    events.insert(std::pair<Clock, std::pair<Device*, bool>>((*i->getTimeOn() + *i->getTimer()), std::pair<Device*, bool>(i, false)));
+            if(i->getTimeOn() > currTime){ 
+                events.insert(std::pair<Clock, std::pair<Device*, bool>>(i->getTimeOn(), std::pair<Device*, bool>(i, true)));
+                if(i->timerExist() && ((i->getTimeOn() + i->getTimer()) <= skipTime)){
+                    events.insert(std::pair<Clock, std::pair<Device*, bool>>((i->getTimeOn() + i->getTimer()), std::pair<Device*, bool>(i, false)));
                 }
-            }else {  //evento off
-                events.insert(std::pair<Clock, std::pair<Device*, bool>>((*i->getTimeOn() + *i->getTimer()), std::pair<Device*, bool>(i, false)));
+            }else { 
+                events.insert(std::pair<Clock, std::pair<Device*, bool>>((i->getTimeOn() + i->getTimer()), std::pair<Device*, bool>(i, false)));
             }
         }
     }
 
     std::string out = "";
 
-    for(std::pair<Clock, std::pair<Device*, bool>> i : events){ //esegue gli eventi in ordine
+    for(std::pair<Clock, std::pair<Device*, bool>> i : events){
         Clock key = i.first;
         Device* value = i.second.first;
         bool flag = i.second.second;
 
         currTime = key;
-        if(flag){ // evento on
+        if(flag){ 
             out += setOn(value->getName());
-        }else{ //evento off
+        }else{ 
             out += setOff(value->getName());
         }
         out += "\n";
@@ -99,12 +105,11 @@ std::string House::setTime(Clock skipTime){
     return out + getCurrentTime(); 
 }
 
-/*
-se la potenza assorbita da tutti i dispositivi è maggiore della potenza massima 
-che si può assorbire dalla rete il systema inizia a spegnere i dispositivi 
-nell’ordine inverso rispetto all’accensione fino ad ottenere una potenza 
-assorbita minore di quella prodotta, riportando a schermo le azioni eseguite.
-*/
+/**
+ * @brief Turns on a specific device. 
+ * @param name The name of the device. 
+ * @return A string representing the status of the device after attempting to turn it on.
+ */
 std::string House::setOn(std::string name){
     try {
         std::string out = "";
@@ -116,7 +121,6 @@ std::string House::setOn(std::string name){
         currEnCost += d->getEnergy();
         activeD.push_back(getDevIndex(name));
         out += currTime.toString() + " Dispositivo " + d->getName() + " acceso";
-        //controllo se energicamente è tutto ok
         if(checkOvrload()){
             out += "\nIl sistema e' in sovraccarico!";
             out += restoreEnergyLimit();
@@ -128,6 +132,11 @@ std::string House::setOn(std::string name){
     }
 }
 
+/**
+ * @brief Turns off a specific device. 
+ * @param name The name of the device. 
+ * @return A string representing the status of the device after attempting to turn it off.
+ */
 std::string House::setOff(std::string name){
     std::string out = "";
     try {
@@ -151,14 +160,15 @@ std::string House::setOff(std::string name){
     
 }
 
-//SOLO DISPOSITIVI MANUAL (per scelta)
-/*
-[13:00] Rimosso il timer dal dispositivo ‘${DEVICENAME}’
-*/
+/**
+ * @brief Removes the timer from a specific device. 
+ * @param name The name of the device. 
+ * @return A string representing the result of the operation after attempting to remove the timer.
+ */
 std::string House::remove(std::string name){
     try {
         Device* d = search(name);
-        if (d->getTimer() != nullptr){
+        if (d->timerExist()){
             d->removeTimer();
             return currTime.toString() + " Rimosso il timer dal dispositivo " + d->getName();
         }else{
@@ -170,7 +180,12 @@ std::string House::remove(std::string name){
     }
 }
 
-//PER EVITARE BUG NOTEVOLI NEL SET TIME SI PUO' FARE SOLO SE IL DISPOSITIVO E' SPENTO
+/**
+ * @brief Set a scheduled time to turn on a specific device, the device must be turned off. 
+ * @param name The name of the device. 
+ * @param start The time to turn on the device. 
+ * @return A string representing the result of the operation after attempting to set the schedule.
+ */
 std::string House::setScheduledOn(std::string name, Clock start){
     if (start <= currTime) {
         return "Impossibile impostare un orario di accensione, si prega di utilizzare un orario nel futuro";
@@ -181,15 +196,20 @@ std::string House::setScheduledOn(std::string name, Clock start){
             return "Impossibile impostare un orario di accensione ad un dispositivo gia' acceso";
 
         d->setSchedule(start);
-        return currTime.toString() + " Impostato orario di accensione per il dispositivo " + d->getName() + " alle " + (*d->getTimeOn()).toString();   
+        return currTime.toString() + " Impostato orario di accensione per il dispositivo " + d->getName() + " alle " + d->getTimeOn().toString();   
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
     }
 }
 
-//SOLO DISPOSITIVI MANUAL
-//PER EVITARE BUG NOTEVOLI NEL SET TIME SI PUO' FARE SOLO SE IL DISPOSITIVO E' SPENTO
+/**
+ * @brief Set a scheduled time to turn on and off a specific device, if it is a CP device. 
+ * @param name The name of the device. 
+ * @param start The time to turn on the device. 
+ * @param stop The time to turn off the device. 
+ * @return A string representing the result of the operation after attempting to set the schedule.
+ */
 std::string House::setScheduledOn(std::string name, Clock start, Clock stop){
     try {
         Device* d = search(name);
@@ -201,11 +221,11 @@ std::string House::setScheduledOn(std::string name, Clock start, Clock stop){
         }
         Manual* derivedPtr = dynamic_cast<Manual*>(d);
         if (derivedPtr){
-            try {  // per vedere se l'orario è valido o no
+            try { 
                 if(derivedPtr->isActive())
                     return "Impossibile impostare un orario di accensione ad un dispositivo gia' acceso";
 
-                derivedPtr->setTimer(stop-start); // Clock start - Clock stop = durata del "timer"
+                derivedPtr->setTimer(stop-start);
                 derivedPtr->setSchedule(start);
             }
             catch(const std::exception& e) {
@@ -221,12 +241,10 @@ std::string House::setScheduledOn(std::string name, Clock start, Clock stop){
     }
 }
 
-/*
-Comando per il debug. 
-Resetta il tempo del systema, riportandolo all’orario 00:00.
-Riporta tutti i dispositivi alle condizioni iniziali.
-Gli eventuali timer aggiunti dopo l’avvio del systema vengono mantenuti.
-*/
+/**
+ * @brief Reset the current time of your home system, restore all devices to their initial condition.. 
+ * @return A string representing the current time after reset.
+ */
 std::string House::resetTime(){
     currTime.reset();
     for(Device* d : devices){
@@ -236,11 +254,10 @@ std::string House::resetTime(){
     return getCurrentTime();
 }
 
-/*
-Comando per il debug. 
-Rimuove i timer di tutti i dispositivi. 
-Tutti i dispositivi rimangono nel loro stato attuale (accesi o spenti).
-*/
+/**
+ * @brief Resets all timers of all devices in the house. 
+ * @return A string indicating that all timers have been removed.
+ */
 std::string House::resetTimers(){
     for(Device* d : devices){
         d->removeTimer();
@@ -248,22 +265,21 @@ std::string House::resetTimers(){
     return "Rimossi tutti i timer di tutti i dispositivi";
 }
 
-/*
-Comando per il debug. 
-Riporta il systema alle condizioni iniziali. 
-L’orario viene impostato a 00:00, tutti i timer vengono rimossi. 
-Tutti i dispositivi vengono spenti.
-*/
+/**
+ * @brief Resets the entire house system, including time and timers. 
+ * @return A string indicating that everything has been reset.
+ */
 std::string House::resetAll(){
     resetTime();
     resetTimers();
     return "Resettato tutto";
 }
 
-/*
-FUNZIONE POPOLA DEVICES CHE RICEVE COME PARAMETRO UNA STRINGA CON UN PATH (FILE.TXT) 
-E LEGGE UN FILE CON TUTTE LE SPECIFICHE DEI DEVICE E POPOLA IL VETTORE
-*/
+/**
+ * @brief Loads devices from a file. 
+ * @param filePath The path to the file containing device information. 
+ * @return A string indicating the outcome of the operation.
+ */
 std::string House::loadsDevices(const std::string& filePath) {
     Id sys;
     std::ifstream file(filePath);
@@ -286,7 +302,7 @@ std::string House::loadsDevices(const std::string& filePath) {
         }
         words.push_back(buff);
 
-        if (words.size() > 2) {  // è auto
+        if (words.size() > 2) { 
             try {
                 Clock c(std::stoi(words[1]), std::stoi(words[2]));
                 Auto* a = new Auto(sys.getId(), words[0], std::stof(words[3]), c);
@@ -295,7 +311,7 @@ std::string House::loadsDevices(const std::string& filePath) {
                 file.close();
                 throw std::invalid_argument("ahahahahah");
             }
-        } else { // è manual
+        } else { 
             Manual* m = new Manual(sys.getId(), words[0], std::stof(words[1]));
             devices.push_back(m);
         }
@@ -306,11 +322,21 @@ std::string House::loadsDevices(const std::string& filePath) {
     return "Inizializzato correttamente tutti i dispositivi";
 }
 
+/**
+ * @brief Gets the current time of the house system. 
+ * @return A string representing the current time.
+ */
 std::string House::getCurrentTime(){
     std::string str = currTime.toString();
     return str + " L'orario attuale e' " + str.substr(1, str.length()-2);
 }
 
+/**
+ * @brief Searches for a device by name. 
+ * @param name The name of the device. 
+ * @return A pointer to the device if found. 
+ * @throws std::invalid_argument if the device is not found.
+ */
 Device* House::search(std::string name){
     for (Device* d : devices){
         if(d->getName() == name){
@@ -319,11 +345,19 @@ Device* House::search(std::string name){
     }
     throw std::invalid_argument("Bad parameter.");
 }
-    
-bool House::checkOvrload(){ // vero se c'è overload, falso se è tutto ok
-    return fabs(currEnCost) > grid; //in c++ in <cmath> abs fa overload per tutti i tipi ti dato primitivo
+
+/**
+ * @brief Checks if the current energy cost exceeds the grid capacity. 
+ * @return True if the current energy cost exceeds the grid capacity, false otherwise.
+ */
+bool House::checkOvrload(){ 
+    return fabs(currEnCost) > grid; 
 }
 
+/**
+ * @brief Restores the energy limit by turning off devices until the energy cost is within the grid capacity. 
+ * @return A string indicating the devices that were turned off to restore the energy limit.
+ */
 std::string House::restoreEnergyLimit(){
     std::string out = "";
     while (checkOvrload()){ 
@@ -336,6 +370,11 @@ std::string House::restoreEnergyLimit(){
     return out;
 }
 
+/**
+ * @brief Gets the index of a device from the devices vector by name. 
+ * @param name The name of the device. 
+ * @return The index of the device if found, -1 otherwise.
+ */
 int House::getDevIndex(std::string name){
     for (int i = 0; i < devices.size(); i++) {
         if (name == devices[i]->getName()) {
@@ -345,6 +384,10 @@ int House::getDevIndex(std::string name){
     return -1;
 }
 
+/**
+ * @brief Removes the indicated device from the active devices vector. 
+ * @param name The name of the device.
+ */
 void House::deactivateDevice(std::string name){
     int k = getDevIndex(name);
     for (int i = 0; i < activeD.size(); i++) {

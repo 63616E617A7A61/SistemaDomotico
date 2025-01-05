@@ -23,7 +23,7 @@ private:
     void deactivateDevice(std::string name);
 public:
     House(float grid);
-    bool isActive() {return active;};    //necessario per il loop del main
+    bool isActive() {return active;};
     std::string show();
     std::string show(std::string name);
     std::string setTime(Clock skipTime);
