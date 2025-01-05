@@ -18,7 +18,6 @@ private:
 
     Device* search(std::string name);
     bool checkOvrload();
-    bool isManual(Device d);
     std::string restoreEnergyLimit();
     int getDevIndex(std::string name);
     void deactivateDevice(std::string name);

@@ -4,9 +4,9 @@
 Manual::Manual(int id, std::string name, float energy) : Device(id, name, energy){}
 
 // SET TIMER
-void Manual::setTimer(Clock timer){
-    if(Device::timer != nullptr){
+void Manual::setTimer(Clock time){
+    if(timer != nullptr){
         throw std::invalid_argument("Timer gia' impostato");
     }
-    Device::timer = new Clock(timer);
+    timer = new Clock(time);
 }

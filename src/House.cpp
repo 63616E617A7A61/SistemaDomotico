@@ -7,12 +7,9 @@
 #include <map>
 #include <fstream>
 #include <cmath>
-#include <iostream>
 
 /* TODO PER ME:
 - tradurre tutto in inglese
-- nel set scheduled on non c'è nessuna verifica che l'orario di programmazione dia un orario del futuro
-- nel set scheduled on inizio fine non riconosce quando è manual o no
 */
 
 /*
@@ -119,8 +116,8 @@ std::string House::setOn(std::string name){
         out += currTime.toString() + " Dispositivo " + d->getName() + " acceso";
         //controllo se energicamente è tutto ok
         if(checkOvrload()){
-            out += "\nIl systema e' in sovraccarico!";
-            restoreEnergyLimit();
+            out += "\nIl sistema e' in sovraccarico!";
+            out += restoreEnergyLimit();
         }
         return out;
     }
@@ -141,8 +138,8 @@ std::string House::setOff(std::string name){
         deactivateDevice(name);
         out += currTime.toString() + " Dispositivo " + d->getName() + " spento";
         if(checkOvrload()){
-            out += "\nIl systema e' in sovraccarico!";
-            restoreEnergyLimit();
+            out += "\nIl sistema e' in sovraccarico!";
+            out += restoreEnergyLimit();
         }
         return out;
     }
@@ -159,11 +156,11 @@ std::string House::setOff(std::string name){
 std::string House::remove(std::string name){
     try {
         Device* d = search(name);
-        if (isManual(*d)){
+        if (d->getTimer() != nullptr){
             d->removeTimer();
             return currTime.toString() + " Rimosso il timer dal dispositivo " + d->getName();
         }else{
-            return "Impossibile rimuovere il timer a un device a ciclo prefissato";
+            return "Impossibile rimuovere il timer a questo device";
         }
     }
     catch(const std::exception& e) {
@@ -173,6 +170,9 @@ std::string House::remove(std::string name){
 
 //PER EVITARE BUG NOTEVOLI NEL SET TIME SI PUO' FARE SOLO SE IL DISPOSITIVO E' SPENTO
 std::string House::setScheduledOn(std::string name, Clock start){
+    if (start <= currTime) {
+        return "Impossibile impostare un orario di accensione, si prega di utilizzare un orario nel futuro";
+    }
     try {
         Device* d = search(name);
         if(d->isActive())
@@ -191,20 +191,24 @@ std::string House::setScheduledOn(std::string name, Clock start){
 std::string House::setScheduledOn(std::string name, Clock start, Clock stop){
     try {
         Device* d = search(name);
-        if (isManual(*d)){
-            Manual* derivedPtr = dynamic_cast<Manual*>(d);
+        if (start <= currTime) {
+            return "Impossibile impostare un orario di accensione, si prega di utilizzare un orario nel futuro";
+        }
+        if (start >= stop){
+            return "Orario di avvio/spegnimento non validi!";
+        }
+        Manual* derivedPtr = dynamic_cast<Manual*>(d);
+        if (derivedPtr){
             try {  // per vedere se l'orario è valido o no
                 if(derivedPtr->isActive())
                     return "Impossibile impostare un orario di accensione ad un dispositivo gia' acceso";
 
-                derivedPtr->setTimer(start-stop); // Clock start - Clock stop = durata del "timer"
+                derivedPtr->setTimer(stop-start); // Clock start - Clock stop = durata del "timer"
                 derivedPtr->setSchedule(start);
             }
             catch(const std::exception& e) {
-                delete derivedPtr; 
                 return "Orario di avvio/spegnimento non validi!";
             }
-            delete derivedPtr; 
             return currTime.toString() + " Impostato un timer per il dispositivo " + d->getName() + " dalle " + start.toString() + " alle "+ stop.toString();
         }else{
             return "Impossibile imopostare l'orario di spegnimento ad un device a ciclo prefissato";
@@ -235,9 +239,6 @@ std::string House::resetTime(){
 Comando per il debug. 
 Rimuove i timer di tutti i dispositivi. 
 Tutti i dispositivi rimangono nel loro stato attuale (accesi o spenti).
-NOTA TOMMI:
-è di debug quindi lo rimuovo a tutti i dispositivi sbatte il cazzo se sono
-auto o manual.
 */
 std::string House::resetTimers(){
     for(Device* d : devices){
@@ -320,25 +321,6 @@ Device* House::search(std::string name){
     
 bool House::checkOvrload(){ // vero se c'è overload, falso se è tutto ok
     return abs(currEnCost) > grid; //in c++ in <cmath> abs fa overload per tutti i tipi ti dato primitivo
-}
-
-bool House::isManual(Device d){ // testato (funziona) non lancia eccezioni
-    Device* basePtr = &d;
-
-    // Verifica se il downcasting è lecito
-    Manual* derivedPtr = dynamic_cast<Manual*>(basePtr);
-
-    if (derivedPtr) {
-        // Il downcasting è lecito
-        delete basePtr;
-        delete derivedPtr;
-        return true;
-    } else {
-        // Il downcasting non è lecito
-        delete basePtr;
-        delete derivedPtr;
-        return false;
-    }
 }
 
 std::string House::restoreEnergyLimit(){
