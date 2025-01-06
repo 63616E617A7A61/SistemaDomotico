@@ -10,6 +10,29 @@ Clock::Clock() : Clock::Clock(0, 0) {}
  * @param hh, mm Hours and Minutes to set the clock 
 */
 Clock::Clock(int hh, int mm) {
+    init(hh, mm);   
+}
+
+/** 
+ * @brief Constructor for the Clock class. 
+ * @param time String formatted as hh:mm
+*/
+Clock::Clock(std::string time) {   
+    if(time.at(2) != ':') {
+        throw std::invalid_argument("Orario non valido");
+    }
+
+    int hh = std::stoi(time.substr(0, 2));  //string to int conversion
+    int mm = std::stoi(time.substr(3, 2));
+
+    init(hh, mm);
+}
+
+/** 
+ * @brief Initizalize Clock with validity check 
+ * @param hh, mm Hours and Minutes to set the clock 
+*/
+void Clock::init(int hh, int mm) {
     if(hh < 0 || hh > 23 || mm < 0 || mm > 59) {
         throw std::invalid_argument("Orario non valido");
     } else {
@@ -17,12 +40,6 @@ Clock::Clock(int hh, int mm) {
         this->mm = mm;
     }
 }
-
-/** 
- * @brief Constructor for the Clock class. 
- * @param time String formatted as hh:mm
-*/
-Clock::Clock(std::string time) : Clock::Clock(std::stoi(time.substr(0, 2)), std::stoi(time.substr(3, 2))) {}    //std::stoi converte string a int
 
 /** 
  * @brief Reset Clock to 00:00 

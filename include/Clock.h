@@ -8,6 +8,7 @@ class Clock{
     private:
         int hh;
         int mm;
+        void init(int hh, int mm);
     public:
         Clock(); //imposta l'orario a 0,0
         Clock(int hh, int mm); //inizializza l'orario se e' valido senno' lancia exception
