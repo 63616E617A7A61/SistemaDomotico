@@ -16,7 +16,7 @@ void print(std::string& out, std::fstream& log) { //funzione di utility, stampa 
 int main() {
     const float gridPower = 3.5; //da stabilire se questo valore lo teniamo fisso o lo faccimao inserire all'utente
     House impianto(gridPower);
-    std::cout << impianto.loadsDevices("devices.txt") << std::endl;
+    //std::cout << impianto.loadsDevices("devices.txt") << std::endl;
 
     time_t currUnix;    //crea oggetto capace di contenere il tempo
     time(&currUnix);    //setta currUnix al orario corrente
@@ -35,16 +35,6 @@ int main() {
             std::getline(std::cin, strInput);   //ottiene in input la riga intera
             log << "Input: " << strInput << std::endl;       //la salva in una riga del file
             int i = 0, j = 1;
-
-            // while(j <= strInput.length()) {
-            //     if(strInput[j] == ' ' || j == strInput.length()) {
-            //         vecInput.push_back(strInput.substr(i, j));  //la separa in parole
-            //         j++;
-            //         i = j++;
-            //     } else {
-            //         j++;
-            //     }
-            // }
 
             std::string buff = "";
             for (char i : strInput) {  // split 
@@ -96,9 +86,10 @@ int main() {
                     throw std::invalid_argument("");
                 }
 
+                out = impianto.getCurrentTime() + " " + out;
                 print(out, log);
             } catch (...) {
-                out = "Input invalido,\ninserisci un nuovo comando\n";
+                out = "Input invalido, inserisci un nuovo comando\n";
                 print(out, log);
             }
         }    
