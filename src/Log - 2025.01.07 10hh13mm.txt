@@ -1,0 +1,12 @@
+Input: set Frigorifero on
+[00:00] L'orario attuale e' 00:00 Dispositivo non trovato, nome scritto in maniera errata
+Input: set Frigorifero on
+[00:00] L'orario attuale e' 00:00 Dispositivo non trovato, nome scritto in maniera errata
+Input: set Frigorifero on
+[00:00] L'orario attuale e' 00:00 Dispositivo non trovato, nome scritto in maniera errata
+Input: set Scaldabagno on
+[00:00] L'orario attuale e' 00:00 Dispositivo non trovato, nome scritto in maniera errata
+Input: set Scaldabagno, on
+[00:00] L'orario attuale e' 00:00 Dispositivo non trovato, nome scritto in maniera errata
+Input: set Lavatrice on
+[00:00] L'orario attuale e' 00:00 Dispositivo non trovato, nome scritto in maniera errata

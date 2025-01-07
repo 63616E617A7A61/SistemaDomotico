@@ -1,14 +1,20 @@
-// TODO: smartpointer, controllo metodi 
-
 #include "../include/Device.h"
 #include <stdexcept>
 
-// Used to create manual devices (manual devices don't have a default timer)
 Device::Device(int id, std::string name, float energy) : ID(id), name(name), energy(energy){
     enTotal = 0; 
     active = false; 
     timeOn = nullptr; 
     timer = nullptr; 
+    essential = false;
+}
+
+bool Device::isEssential(){
+    return essential;
+}
+
+void Device::setEssential(bool val){
+    essential = val;
 }
 
 std::string Device::getName(){
@@ -86,8 +92,8 @@ void Device::turnOff(Clock currTime){
     //     throw std::invalid_argument("Dispositivo gia' spento");
     // }
     Clock time = currTime - *timeOn; 
-    float hh = time.getHh() + time.getMm()/60; 
-    enTotal += energy * hh;
+    float hh = time.getHh() + time.getMm(); 
+    enTotal += energy * ((currTime - *timeOn).getHh() +(currTime - *timeOn).getMm());
 
     deactivate(); 
 }
@@ -105,10 +111,6 @@ bool Device::check(Clock skipTime, Clock currTime){
 
 float Device::show(Clock currentTime){
     float tmpEn = enTotal + (active ? energy * ((currentTime - *timeOn).getHh() +(currentTime - *timeOn).getMm()) : 0);
-    // if(enTotal > 0 || tmpEn > 0){
-    //     return "Il dispositivo " + name + " ha prodotto " + std::to_string(tmpEn) + " Wh";
-    // }
-    // return "Il dispositivo " + name + " ha consumato " + std::to_string(tmpEn) + " Wh";
     return tmpEn;
 }
 

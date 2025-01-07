@@ -14,6 +14,7 @@ private:
     float enTotal;
     Clock* timeOn;
     bool active;
+    bool essential; // se true non può essere spento
 public:
     Device(int id, std::string name, float energy);
     Device();
@@ -35,6 +36,8 @@ public:
     void setSchedule(Clock start); //se l'orario è valico imposta timeOn altrimenti lancia eccezione (invalid_argument)
     void removeTimer();
     bool isActive();
+    bool isEssential();
+    void setEssential(bool val);
     virtual ~Device();
 };
 
