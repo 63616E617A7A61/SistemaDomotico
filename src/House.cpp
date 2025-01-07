@@ -7,6 +7,7 @@
 #include <map>
 #include <fstream>
 #include <cmath>
+#include <set>
 
 /** 
  * @brief Constructor for the House class. 
@@ -27,15 +28,15 @@ std::string House::show(){
     float wasted = 0;
     for(Device* d : devices){
         float en = d->show(currTime);
-        if(en > 0) out += "- Il dispositivo " + d->getName() + " ha prodotto " + std::to_string(en) + " Wh\n";
-        else out += "- Il dispositivo " + d->getName() + " ha consumato " + std::to_string(en) + " Wh\n";
+        if(en > 0) out += "- Il dispositivo " + d->getName() + " ha prodotto " + format(en) + " Wh\n";
+        else out += "- Il dispositivo " + d->getName() + " ha consumato " + format(en) + " Wh\n";
         if (en < 0)
             wasted += en;
         else
             absorbed += en;
     }
     out.resize(out.size() - 1);
-    return currTime.toString() + " Attualmente il sistema ha prodotto " + std::to_string(absorbed) + " kWh e consumato " + std::to_string(wasted) +" kWh. Nello specifico:\n" + out;
+    return currTime.toString() + " Attualmente il sistema ha prodotto " + format(absorbed) + " kWh e consumato " + format(wasted) +" kWh. Nello specifico:\n" + out;
 }
 
 /**
@@ -47,8 +48,8 @@ std::string House::show(std::string name){
     try {
         Device* d = search(name);
         float en = d->show(currTime);
-        if(en > 0) return currTime.toString() + " Il dispositivo " + d->getName() + " ha prodotto " + std::to_string(en) + " Wh";
-        else return currTime.toString() + " Il dispositivo " + d->getName() + " ha consumato " + std::to_string(en) + " Wh";
+        if(en > 0) return currTime.toString() + " Il dispositivo " + d->getName() + " ha prodotto " + format(en) + " Wh";
+        else return currTime.toString() + " Il dispositivo " + d->getName() + " ha consumato " + format(en) + " Wh";
     }
     catch(const std::exception& e) {
         return "Dispositivo non trovato, nome scritto in maniera errata";
@@ -288,6 +289,8 @@ std::string House::loadsDevices(const std::string& filePath) {
         return "Errore nell'apertura del file " + filePath;
     }
     
+    std::set<std::string> names;
+    float essentialEn = 0;
     std::string line;
     while (std::getline(file, line)) {
         std::vector<std::string> words;
@@ -302,19 +305,31 @@ std::string House::loadsDevices(const std::string& filePath) {
         }
         words.push_back(buff);
 
-        if (words.size() > 2) { 
+        if (names.insert(words[0]).second == false){
+            return "Nel dataset ci sono due dispositivi con lo stesso nome!";
+        }
+
+        if (words.size() > 3) { 
             try {
                 Clock c(std::stoi(words[1]), std::stoi(words[2]));
                 Auto* a = new Auto(sys.getId(), words[0], std::stof(words[3]), c);
+                a->setEssential((bool) std::stoi(words[4]));
+                if(a->isEssential()) essentialEn += a->getEnergy(); 
                 devices.push_back(a);
             } catch(const std::exception& e) {
                 file.close();
-                throw std::invalid_argument("ahahahahah");
+                throw std::invalid_argument("Orario non valido");
             }
         } else { 
             Manual* m = new Manual(sys.getId(), words[0], std::stof(words[1]));
+            m->setEssential((bool) std::stoi(words[2]));
+            if(m->isEssential()) essentialEn += m->getEnergy(); 
             devices.push_back(m);
         }
+    }
+
+    if (fabs(essentialEn) >= grid) {
+        return "Nel dataset ci sono troppi dispositivi essenziali!";
     }
 
     file.close();
@@ -361,11 +376,18 @@ bool House::checkOvrload(){
 std::string House::restoreEnergyLimit(){
     std::string out = "";
     while (checkOvrload()){ 
-        Device* r = devices[activeD[activeD.size()-1]];
+        int i = activeD.size()-1;
+        Device* r = devices[activeD[i]];
+        // If the device cannot be turned off due to overload, or if it is necessary, find another device to turn off always in the reverse order to turning it on
+        while (r->isEssential()) {
+            out += "\nImpossibile spegnere " + r->getName() + " a causa di un sovraccarico";
+            i--;
+            r = devices[activeD[i]];
+        }
         r->turnOff(currTime);
         currEnCost -= r->getEnergy();
         out += "\n" + currTime.toString() + " Dispositivo " + r->getName() + " spento";
-        activeD.pop_back();
+        deactivateDevice(r->getName());
     }
     return out;
 }
@@ -396,4 +418,14 @@ void House::deactivateDevice(std::string name){
             return;
         }
     }
+}
+
+/**
+ * @brief Formats a float value to a string with a specific format ('f.ff').
+ * @param val The float value to be formatted.
+ * @return A string representing the formatted float value in the 'f.ff' format.
+ */
+std::string format(float val){
+    std::string out = std::to_string(val);
+    return out.substr(0, out.find('.') + 3);
 }

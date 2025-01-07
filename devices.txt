@@ -1,10 +1,10 @@
-Impianto_fotovoltaico, 1.5
-Lavatrice, 1:50, -2
-Lavastoviglie, 3:15, -1.5
-Pompa_di_calore, -2
-Tapparelle_elettriche, 0:01, -0.3
-Scaldabagno, -1
-Frigorifero, -0.4
-Forno_a_microonde, 0:02, -0.8
-Asciugatrice, 1:00, -0.5
-Televisore, 1:00, -0.2
+Impianto_fotovoltaico, 1.5, 0
+Lavatrice, 1:50, -2, 0
+Lavastoviglie, 3:15, -1.5, 0
+Pompa_di_calore, -2, 0
+Tapparelle_elettriche, 0:01, -0.3, 0
+Scaldabagno, -1, 0
+Frigorifero, -0.4, 1
+Forno_a_microonde, 0:02, -0.8, 0
+Asciugatrice, 1:00, -0.5, 0
+Televisore, 1:00, -0.2, 0

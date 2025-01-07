@@ -39,4 +39,6 @@ public:
     std::string getCurrentTime();
 };
 
+std::string format(float val);
+
 #endif
