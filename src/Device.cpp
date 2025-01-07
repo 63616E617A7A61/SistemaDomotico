@@ -91,9 +91,7 @@ void Device::turnOff(Clock currTime){
     // if(active == false){
     //     throw std::invalid_argument("Dispositivo gia' spento");
     // }
-    Clock time = currTime - *timeOn; 
-    float hh = time.getHh() + time.getMm(); 
-    enTotal += energy * ((currTime - *timeOn).getHh() +(currTime - *timeOn).getMm());
+    enTotal += energy * ((currTime - *timeOn).getHh() +(currTime - *timeOn).getMm()/60.0);
 
     deactivate(); 
 }
@@ -110,7 +108,7 @@ bool Device::check(Clock skipTime, Clock currTime){
 
 
 float Device::show(Clock currentTime){
-    float tmpEn = enTotal + (active ? energy * ((currentTime - *timeOn).getHh() +(currentTime - *timeOn).getMm()) : 0);
+    float tmpEn = enTotal + (active ? energy * ((currentTime - *timeOn).getHh() +(currentTime - *timeOn).getMm()/60.0) : 0);
     return tmpEn;
 }
 
