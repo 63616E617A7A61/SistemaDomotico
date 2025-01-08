@@ -285,7 +285,7 @@ std::string House::loadsDevices(const std::string& filePath) {
     std::ifstream file(filePath);
 
     if (!file.is_open()) {
-        return "Errore nell'apertura del file " + filePath;
+        throw std::runtime_error("Errore nell'apertura del file " + filePath);
     }
     
     std::set<std::string> names;
