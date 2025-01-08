@@ -88,8 +88,8 @@ std::string Clock::toString() {
 //-----OPERATORS--------
 Clock operator+ (const Clock& c1, const Clock& c2) {
     int newMM = c1.getMm() + c2.getMm();
-    int ofHH = newMM / 60; //HH aggiuntive date dall'OverFlow di minuti
-    newMM%=60;             //calcolo dell'effettivo numero di minuti nel clock da ritornare
+    int ofHH = newMM / 60; // OverFlow of minutes
+    newMM%=60;
     int newHH = (c1.getHh() + c2.getHh() + ofHH) % 24;
 
     return Clock(newHH, newMM);

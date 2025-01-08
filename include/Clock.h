@@ -9,9 +9,9 @@ class Clock{
         int mm;
         void init(int hh, int mm);
     public:
-        Clock(); //imposta l'orario a 0,0
-        Clock(int hh, int mm); //inizializza l'orario se e' valido senno' lancia exception
-        Clock(std::string time);    //estrae da stringa hh e mm e chiama Clock(int, int)
+        Clock();
+        Clock(int hh, int mm);
+        Clock(std::string time);
         
         int getHh() const { return hh; }
         int getMm() const { return mm; }
@@ -21,7 +21,7 @@ class Clock{
         void setHh(int hh);
         void setMm(int mm);
         
-        std::string toString(); // ritorna [hh:mm]
+        std::string toString();
 };
 
 Clock operator+ (const Clock& c1, const Clock& c2);
