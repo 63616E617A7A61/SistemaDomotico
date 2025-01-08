@@ -16,8 +16,13 @@ void print(std::string& out, std::fstream& log) { //funzione di utility, stampa 
 int main() {
     const float gridPower = 3.5; //da stabilire se questo valore lo teniamo fisso o lo faccimao inserire all'utente
     House impianto(gridPower);
-    std::cout << impianto.loadsDevices("devices.txt") << std::endl;
-    // impianto.loadsDevices("devices.txt");
+
+    try {
+        impianto.loadsDevices("devices.txt");
+    } catch (std::exception& e) {
+        std::cout << e.what() << std::endl;
+        return 1;
+    }
 
     time_t currUnix;    //crea oggetto capace di contenere il tempo
     time(&currUnix);    //setta currUnix al orario corrente
@@ -48,38 +53,37 @@ int main() {
             }
             vecInput.push_back(buff);
 
-            std::string out = "";
+            std::string out = impianto.getCurrentTime() + "\n";
             try {
-                
                 if (vecInput.at(0) == "set") {     //c++ non supporta switch case con le string. se lo riteniamo necessario troverò una soluzione più carina
                     if (vecInput.at(1) == "time") {    
-                        out = impianto.setTime(Clock(vecInput.at(2)));
+                        out += impianto.setTime(Clock(vecInput.at(2)));
                     } else if (vecInput.at(2) == "on") {
-                        out = impianto.setOn(vecInput.at(1));
+                        out += impianto.setOn(vecInput.at(1));
                     } else if (vecInput.at(2) == "off") {
-                        out = impianto.setOff(vecInput.at(1));
+                        out += impianto.setOff(vecInput.at(1));
                     } else {
                         if (vecInput.size() == 3) {
-                            out = impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)));
+                            out += impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)));
                         } else {
-                            out = impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)), Clock(vecInput.at(3)));
+                            out += impianto.setScheduledOn(vecInput.at(1), Clock(vecInput.at(2)), Clock(vecInput.at(3)));
                         }
                     }
                 } else if (vecInput.at(0) == "rm") {
-                    out = impianto.remove(vecInput.at(1));
+                    out += impianto.remove(vecInput.at(1));
                 } else if (vecInput.at(0) == "show") {
                     if (vecInput.size() == 1) {
-                        out = impianto.show();
+                        out += impianto.show();
                     } else {
-                        out = impianto.show(vecInput.at(1));
+                        out += impianto.show(vecInput.at(1));
                     }
                 } else if (vecInput.at(0) == "reset") {
                     if (vecInput.at(1) == "time") {    
-                        out = impianto.resetTime();
+                        out += impianto.resetTime();
                     } else if (vecInput.at(1) == "timers") {    
-                        out = impianto.resetTimers();
+                        out += impianto.resetTimers();
                     } else if (vecInput.at(1) == "all") {    
-                        out = impianto.resetAll();
+                        out += impianto.resetAll();
                     } else {
                         throw std::invalid_argument("");
                     }
@@ -87,7 +91,6 @@ int main() {
                     throw std::invalid_argument("");
                 }
 
-                out = impianto.getCurrentTime() + "\n" + out;
                 print(out, log);
             } catch (...) {
                 out = "Input invalido, inserisci un nuovo comando\n";
