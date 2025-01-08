@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Clock.h"
+#include <stdexcept>
 
 class Device{
 protected: 

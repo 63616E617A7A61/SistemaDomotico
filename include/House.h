@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include "Device.h"
-#include "Manual.h"
 #include "Clock.h"
 
 class House{

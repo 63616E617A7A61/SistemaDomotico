@@ -1,4 +1,5 @@
 #include "../include/Clock.h"
+#include <stdexcept>
 
 /** 
  * @brief Empty Default Constructor for the Clock class.
@@ -18,7 +19,7 @@ Clock::Clock(int hh, int mm) {
  * @param time String formatted as hh:mm
 */
 Clock::Clock(std::string time) {   
-    if(time.at(2) != ':') {
+    if(time.at(2) != ':' || time.length() != 5) {
         throw std::invalid_argument("Orario non valido");
     }
 

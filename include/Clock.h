@@ -2,7 +2,6 @@
 #define CLOCK
 
 #include <string>
-#include <stdexcept>
 
 class Clock{
     private:

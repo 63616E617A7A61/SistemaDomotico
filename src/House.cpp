@@ -1,6 +1,5 @@
 #include "../include/House.h"
 #include "../include/Id.h"
-#include "../include/Device.h"
 #include "../include/Auto.h"
 #include "../include/Manual.h"
 #include <stdexcept>
@@ -306,7 +305,7 @@ std::string House::loadsDevices(const std::string& filePath) {
         words.push_back(buff);
 
         if (names.insert(words[0]).second == false){
-            return "Nel dataset ci sono due dispositivi con lo stesso nome!";
+            throw std::runtime_error("Nel dataset ci sono due dispositivi con lo stesso nome!");
         }
 
         if (words.size() > 3) { 
@@ -329,7 +328,7 @@ std::string House::loadsDevices(const std::string& filePath) {
     }
 
     if (fabs(essentialEn) >= grid) {
-        return "Nel dataset ci sono troppi dispositivi essenziali!";
+        throw std::runtime_error("Nel dataset ci sono troppi dispositivi essenziali!");
     }
 
     file.close();
@@ -426,6 +425,6 @@ void House::deactivateDevice(std::string name){
  * @return A string representing the formatted float value in the 'f.ff' format.
  */
 std::string format(float val){
-    std::string out = std::to_string(val);
+    std::string out = std::to_string(fabs(val));
     return out.substr(0, out.find('.') + 3);
 }

@@ -1,5 +1,4 @@
 #include "../include/Device.h"
-#include <stdexcept>
 
 Device::Device(int id, std::string name, float energy) : ID(id), name(name), energy(energy){
     enTotal = 0; 
