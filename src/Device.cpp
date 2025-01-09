@@ -18,7 +18,7 @@ Device::Device(int id, std::string name, float energy) : ID(id), name(name), ene
  * Checks if the device is essential.
  * @return True if the device is essential, false otherwise.
  */
-bool Device::isEssential(){
+bool Device::isEssential() const{
     return essential;
 }
 
@@ -34,7 +34,7 @@ void Device::setEssential(bool val){
  * Gets the name of the device.
  * @return The name of the device.
  */
-std::string Device::getName(){
+std::string Device::getName() const{
     return name;
 }
 
@@ -42,7 +42,7 @@ std::string Device::getName(){
  * Gets the total energy consumed by the device.
  * @return The total energy consumed.
  */
-float Device::getEnTotal(){
+float Device::getEnTotal() const{
     return enTotal;
 }
 
@@ -50,7 +50,7 @@ float Device::getEnTotal(){
  * Gets the energy consumption of the device.
  * @return The energy consumption.
  */
-float Device::getEnergy(){
+float Device::getEnergy() const{
     return energy;
 }
 
@@ -58,7 +58,7 @@ float Device::getEnergy(){
  * Gets the ID of the device.
  * @return The ID of the device.
  */
-int Device::getId(){
+int Device::getId() const{
     return ID;
 }
 
@@ -66,7 +66,7 @@ int Device::getId(){
  * Gets the time the device was turned on.
  * @return The time the device was turned on.
  */
-Clock Device::getTimeOn(){
+Clock Device::getTimeOn() const{
     return *timeOn;
 }
 
@@ -74,7 +74,7 @@ Clock Device::getTimeOn(){
  * Gets the timer of the device.
  * @return The timer of the device.
  */
-Clock Device::getTimer(){
+Clock Device::getTimer() const{
     return *timer;
 }
 
@@ -82,7 +82,7 @@ Clock Device::getTimer(){
  * Checks if the timer exists.
  * @return True if the timer exists, false otherwise.
  */
-bool Device::timerExist(){
+bool Device::timerExist() const{
     if (timer != nullptr){
         return true;
     }
@@ -112,7 +112,7 @@ void Device::removeSchedule(){
  * @param start The start time of the schedule.
  * @throw std::invalid_argument if the device is already scheduled.
  */
-void Device::setSchedule(Clock start){
+void Device::setSchedule(Clock& start){
     if(timeOn != nullptr){
         throw std::invalid_argument("Device not available"); 
     }
@@ -123,7 +123,7 @@ void Device::setSchedule(Clock start){
  * Turns on the device.
  * @param currTime The current time.
  */
-void Device::turnOn(Clock currTime){
+void Device::turnOn(Clock& currTime){
     active = true;
     timeOn = new Clock(currTime);
 }
@@ -132,7 +132,7 @@ void Device::turnOn(Clock currTime){
  * Turns off the device.
  * @param currTime The current time.
  */
-void Device::turnOff(Clock currTime){
+void Device::turnOff(Clock& currTime){
     enTotal += energy * ((currTime - *timeOn).getHh() +(currTime - *timeOn).getMm()/60.0);
     deactivate(); 
 }
@@ -143,7 +143,7 @@ void Device::turnOff(Clock currTime){
  * @param currTime The current time.
  * @return True if the device turned on or off, false otherwise.
  */
-bool Device::check(Clock skipTime, Clock currTime){
+bool Device::check(Clock& skipTime, Clock& currTime){
     if(timeOn != nullptr && (*timeOn <= skipTime && *timeOn > currTime)){
         return true;
     }
@@ -158,7 +158,7 @@ bool Device::check(Clock skipTime, Clock currTime){
  * @param currentTime The current time.
  * @return The energy consumed.
  */
-float Device::show(Clock currentTime){
+float Device::show(Clock& currentTime) const{
     float tmpEn = enTotal + (active ? energy * ((currentTime - *timeOn).getHh() +(currentTime - *timeOn).getMm()/60.0) : 0);
     return tmpEn;
 }
@@ -176,7 +176,7 @@ void Device::deactivate(){
  * Checks if the device is active.
  * @return True if the device is active, false otherwise.
  */
-bool Device::isActive(){
+bool Device::isActive() const{
     return active;
 }
 

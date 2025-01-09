@@ -43,7 +43,7 @@ std::string House::show(){
  * @param name The name of the device. 
  * @return A string representing the current status of the specified device.
  */
-std::string House::show(std::string name){
+std::string House::show(std::string& name) {
     try {
         Device* d = search(name);
         float en = d->show(currTime);
@@ -60,7 +60,7 @@ std::string House::show(std::string name){
  * @param skipTime The time to set. 
  * @return A string representing the events that occurred during the time skip.
  */
-std::string House::setTime(Clock skipTime){
+std::string House::setTime(Clock& skipTime){
     if (skipTime<currTime) {
         active = false;
         skipTime = Clock(23, 59);
@@ -110,7 +110,7 @@ std::string House::setTime(Clock skipTime){
  * @param name The name of the device. 
  * @return A string representing the status of the device after attempting to turn it on.
  */
-std::string House::setOn(std::string name){
+std::string House::setOn(std::string& name){
     try {
         std::string out = "";
         Device* d = search(name);
@@ -137,7 +137,7 @@ std::string House::setOn(std::string name){
  * @param name The name of the device. 
  * @return A string representing the status of the device after attempting to turn it off.
  */
-std::string House::setOff(std::string name){
+std::string House::setOff(std::string& name){
     std::string out = "";
     try {
         Device* d = search(name);
@@ -165,7 +165,7 @@ std::string House::setOff(std::string name){
  * @param name The name of the device. 
  * @return A string representing the result of the operation after attempting to remove the timer.
  */
-std::string House::remove(std::string name){
+std::string House::remove(std::string& name){
     try {
         Device* d = search(name);
         if (d->timerExist()){
@@ -186,7 +186,7 @@ std::string House::remove(std::string name){
  * @param start The time to turn on the device. 
  * @return A string representing the result of the operation after attempting to set the schedule.
  */
-std::string House::setScheduledOn(std::string name, Clock start){
+std::string House::setScheduledOn(std::string& name, Clock& start){
     if (start <= currTime) {
         return "Impossibile impostare un orario di accensione, si prega di utilizzare un orario nel futuro";
     }
@@ -210,7 +210,7 @@ std::string House::setScheduledOn(std::string name, Clock start){
  * @param stop The time to turn off the device. 
  * @return A string representing the result of the operation after attempting to set the schedule.
  */
-std::string House::setScheduledOn(std::string name, Clock start, Clock stop){
+std::string House::setScheduledOn(std::string& name, Clock& start, Clock& stop){
     try {
         Device* d = search(name);
         if (start <= currTime) {
@@ -279,6 +279,7 @@ std::string House::resetAll(){
  * @brief Loads devices from a file. 
  * @param filePath The path to the file containing device information. 
  * @return A string indicating the outcome of the operation.
+ * @throws std::runtime_error if the file input has been corrupted.
  */
 std::string House::loadsDevices(const std::string& filePath) {
     Id sys;
@@ -351,7 +352,7 @@ std::string House::getCurrentTime(){
  * @return A pointer to the device if found. 
  * @throws std::invalid_argument if the device is not found.
  */
-Device* House::search(std::string name){
+Device* House::search(std::string& name){
     for (Device* d : devices){
         if(d->getName() == name){
             return d;
@@ -396,7 +397,7 @@ std::string House::restoreEnergyLimit(){
  * @param name The name of the device. 
  * @return The index of the device if found, -1 otherwise.
  */
-int House::getDevIndex(std::string name){
+int House::getDevIndex(std::string& name){
     for (int i = 0; i < devices.size(); i++) {
         if (name == devices[i]->getName()) {
             return i;
@@ -409,7 +410,7 @@ int House::getDevIndex(std::string name){
  * @brief Removes the indicated device from the active devices vector. 
  * @param name The name of the device.
  */
-void House::deactivateDevice(std::string name){
+void House::deactivateDevice(std::string& name){
     int k = getDevIndex(name);
     for (int i = 0; i < activeD.size(); i++) {
         if (activeD[i] == k) {

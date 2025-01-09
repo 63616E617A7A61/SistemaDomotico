@@ -6,8 +6,6 @@
 #include <stdexcept>
 
 class Device{
-protected: 
-    Clock* timer;
 private:
     int ID;
     std::string name;
@@ -15,29 +13,30 @@ private:
     float enTotal;
     Clock* timeOn;
     bool active;
-    bool essential; // se true non può essere spento
-public:
+    bool essential;
+protected: 
+    Clock* timer;
     Device(int id, std::string name, float energy);
     Device();
-    float show(Clock currentTime);
-    bool check(Clock skipTim, Clock currTime);
-    void turnOn(Clock currTime);
-    void turnOff(Clock currTime); //spegne il dispositivo calcola i consumi e chiama deactivate()
-    // Device& operator=(const Device& other) = delete;  da problemi nella classe House.cpp
-    std::string getName();
-    float getEnTotal();
-    float getEnergy();
-    int getId();
-    Clock getTimeOn();
-    Clock getTimer();
-    bool timerExist();
-    void deactivate(); // set active to false
+public:
+    float show(Clock& currentTime) const;
+    bool check(Clock& skipTim, Clock& currTime);
+    void turnOn(Clock& currTime);
+    void turnOff(Clock& currTime);
+    std::string getName() const;
+    float getEnTotal() const;
+    float getEnergy() const;
+    int getId() const;
+    Clock getTimeOn() const;
+    Clock getTimer() const;
+    bool timerExist() const;
+    void deactivate(); 
     void setEnTotal(float val);
-    void removeSchedule(); // svuota timeOn
-    void setSchedule(Clock start); //se l'orario è valico imposta timeOn altrimenti lancia eccezione (invalid_argument)
+    void removeSchedule(); 
+    void setSchedule(Clock& start);
     void removeTimer();
-    bool isActive();
-    bool isEssential();
+    bool isActive() const;
+    bool isEssential() const;
     void setEssential(bool val);
     virtual ~Device();
 };
