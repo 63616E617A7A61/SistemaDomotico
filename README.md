@@ -1,5 +1,5 @@
 # SistemaDomotico
-[Specifica](./Progetto Finale - Sistema domotico - v2.pdf)
+[Specifica](https://github.com/63616E617A7A61/SistemaDomotico/blob/ff758bbdd1b5a574555ccbfb65b197e7fb822db0/Progetto%20Finale%20-%20Sistema%20domotico%20-%20v2.pdf)
 
 ## Note per l'esecuzione
  - Il programma va eseguito dalla cartella in cui è presente devices.txt
