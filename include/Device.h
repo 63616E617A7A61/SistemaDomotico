@@ -1,3 +1,5 @@
+// @author Nicola Zillio
+
 #ifndef DEVICE
 #define DEVICE
 

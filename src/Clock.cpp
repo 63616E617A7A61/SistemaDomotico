@@ -1,3 +1,5 @@
+// @author Leonardo Sivori
+
 #include "../include/Clock.h"
 #include <stdexcept>
 

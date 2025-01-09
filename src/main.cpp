@@ -1,3 +1,5 @@
+// @author Leonardo Sivori
+
 #include "../include/Auto.h"
 #include "../include/Clock.h"
 #include "../include/Device.h"

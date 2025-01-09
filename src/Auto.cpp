@@ -1,3 +1,5 @@
+// @author Nicola Zillio
+
 #include "../include/Auto.h"
 
 /**

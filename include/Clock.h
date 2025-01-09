@@ -1,3 +1,5 @@
+// @author Leonardo Sivori
+
 #ifndef CLOCK
 #define CLOCK
 

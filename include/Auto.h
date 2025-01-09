@@ -1,3 +1,5 @@
+// @author Nicola Zillio
+
 #ifndef AUTO
 #define AUTO
 

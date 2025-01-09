@@ -1,3 +1,5 @@
+// @author Nicola Zillio
+
 #ifndef MANUAL
 #define MANUAL
 
@@ -8,7 +10,7 @@ private:
     
 public:
     Manual(int id, std::string name, float energy);
-    void setTimer(Clock& timer);
+    void setTimer(Clock timer);
 };
 
 #endif

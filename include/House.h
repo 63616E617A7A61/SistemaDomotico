@@ -1,3 +1,5 @@
+// @author Tommaso Rovoletto
+
 #ifndef HOUSE
 #define HOUSE
 
@@ -19,18 +21,18 @@ private:
     bool checkOvrload();
     std::string restoreEnergyLimit();
     int getDevIndex(std::string& name);
-    void deactivateDevice(std::string& name);
+    void deactivateDevice(std::string name);
 public:
     House(float grid);
     bool isActive() const {return active;};
     std::string show();
     std::string show(std::string& name);
-    std::string setTime(Clock& skipTime);
-    std::string setOn(std::string& name);
-    std::string setOff(std::string& name);
+    std::string setTime(Clock skipTime);
+    std::string setOn(std::string name);
+    std::string setOff(std::string name);
     std::string remove(std::string& name);
-    std::string setScheduledOn(std::string& name, Clock& start);
-    std::string setScheduledOn(std::string& name, Clock& start, Clock& stop);
+    std::string setScheduledOn(std::string& name, Clock start);
+    std::string setScheduledOn(std::string& name, Clock start, Clock stop);
     std::string resetTime();
     std::string resetTimers();
     std::string resetAll();
