@@ -1,0 +1,116 @@
+Input: set Frigorifero on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Frigorifero acceso
+Input: set Lavatrice on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Lavatrice acceso
+Input: set time 06:00
+[00:00] L'orario attuale e' 00:00
+[01:50] Dispositivo Lavatrice spento
+[06:00] L'orario attuale e' 06:00
+Input: set Impianto_fotovoltaico on
+[06:00] L'orario attuale e' 06:00
+[06:00] Dispositivo Impianto_fotovoltaico acceso
+Input: show
+[06:00] L'orario attuale e' 06:00
+[06:00] Attualmente il sistema ha prodotto 0.00 kWh e consumato 6.06 kWh. Nello specifico:
+- Il dispositivo Impianto_fotovoltaico ha consumato 0.00 Wh
+- Il dispositivo Lavatrice ha consumato 3.66 Wh
+- Il dispositivo Lavastoviglie ha consumato 0.00 Wh
+- Il dispositivo Pompa_di_calore ha consumato 0.00 Wh
+- Il dispositivo Tapparelle_elettriche ha consumato 0.00 Wh
+- Il dispositivo Scaldabagno ha consumato 0.00 Wh
+- Il dispositivo Frigorifero ha consumato 2.40 Wh
+- Il dispositivo Forno_a_microonde ha consumato 0.00 Wh
+- Il dispositivo Asciugatrice ha consumato 0.00 Wh
+- Il dispositivo Televisore ha consumato 0.00 Wh
+Input: set Pompa_di_calore 10:00 12:00
+[06:00] L'orario attuale e' 06:00
+[06:00] Impostato un timer per il dispositivo Pompa_di_calore dalle [10:00] alle [12:00]
+Input: set Televisore 09:00
+[06:00] L'orario attuale e' 06:00
+[06:00] Impostato orario di accensione per il dispositivo Televisore alle [09:00]
+Input: set time 10:30
+[06:00] L'orario attuale e' 06:00
+[09:00] Dispositivo Televisore acceso
+[10:00] Dispositivo Pompa_di_calore acceso
+[10:00] Dispositivo Televisore spento
+[10:30] L'orario attuale e' 10:30
+Input: set Asciugatrice on
+[10:30] L'orario attuale e' 10:30
+[10:30] Dispositivo Asciugatrice acceso
+Input: set time 13:00
+[10:30] L'orario attuale e' 10:30
+[11:30] Dispositivo Asciugatrice spento
+[12:00] Dispositivo Pompa_di_calore spento
+[13:00] L'orario attuale e' 13:00
+Input: show
+[13:00] L'orario attuale e' 13:00
+[13:00] Attualmente il sistema ha prodotto 10.50 kWh e consumato 13.56 kWh. Nello specifico:
+- Il dispositivo Impianto_fotovoltaico ha prodotto 10.50 Wh
+- Il dispositivo Lavatrice ha consumato 3.66 Wh
+- Il dispositivo Lavastoviglie ha consumato 0.00 Wh
+- Il dispositivo Pompa_di_calore ha consumato 4.00 Wh
+- Il dispositivo Tapparelle_elettriche ha consumato 0.00 Wh
+- Il dispositivo Scaldabagno ha consumato 0.00 Wh
+- Il dispositivo Frigorifero ha consumato 5.20 Wh
+- Il dispositivo Forno_a_microonde ha consumato 0.00 Wh
+- Il dispositivo Asciugatrice ha consumato 0.50 Wh
+- Il dispositivo Televisore ha consumato 0.20 Wh
+Input: rm Televisore
+[13:00] L'orario attuale e' 13:00
+[13:00] Rimosso il timer dal dispositivo Televisore
+Input: set time 15:00
+[13:00] L'orario attuale e' 13:00
+[15:00] L'orario attuale e' 15:00
+Input: show
+[15:00] L'orario attuale e' 15:00
+[15:00] Attualmente il sistema ha prodotto 13.50 kWh e consumato 14.36 kWh. Nello specifico:
+- Il dispositivo Impianto_fotovoltaico ha prodotto 13.50 Wh
+- Il dispositivo Lavatrice ha consumato 3.66 Wh
+- Il dispositivo Lavastoviglie ha consumato 0.00 Wh
+- Il dispositivo Pompa_di_calore ha consumato 4.00 Wh
+- Il dispositivo Tapparelle_elettriche ha consumato 0.00 Wh
+- Il dispositivo Scaldabagno ha consumato 0.00 Wh
+- Il dispositivo Frigorifero ha consumato 6.00 Wh
+- Il dispositivo Forno_a_microonde ha consumato 0.00 Wh
+- Il dispositivo Asciugatrice ha consumato 0.50 Wh
+- Il dispositivo Televisore ha consumato 0.20 Wh
+Input: set Televisore off
+[15:00] L'orario attuale e' 15:00
+Dispositivo Televisore e' gia' spento
+Input: set Televisore on
+[15:00] L'orario attuale e' 15:00
+[15:00] Dispositivo Televisore acceso
+Input: set time 17:00
+[15:00] L'orario attuale e' 15:00
+[17:00] L'orario attuale e' 17:00
+Input: set Televisore off
+[17:00] L'orario attuale e' 17:00
+[17:00] Dispositivo Televisore spento
+Input: show
+[17:00] L'orario attuale e' 17:00
+[17:00] Attualmente il sistema ha prodotto 16.50 kWh e consumato 15.56 kWh. Nello specifico:
+- Il dispositivo Impianto_fotovoltaico ha prodotto 16.50 Wh
+- Il dispositivo Lavatrice ha consumato 3.66 Wh
+- Il dispositivo Lavastoviglie ha consumato 0.00 Wh
+- Il dispositivo Pompa_di_calore ha consumato 4.00 Wh
+- Il dispositivo Tapparelle_elettriche ha consumato 0.00 Wh
+- Il dispositivo Scaldabagno ha consumato 0.00 Wh
+- Il dispositivo Frigorifero ha consumato 6.80 Wh
+- Il dispositivo Forno_a_microonde ha consumato 0.00 Wh
+- Il dispositivo Asciugatrice ha consumato 0.50 Wh
+- Il dispositivo Televisore ha consumato 0.60 Wh
+Input: set Impianto_fotovoltaico off
+[17:00] L'orario attuale e' 17:00
+[17:00] Dispositivo Impianto_fotovoltaico spento
+Input: set time 20:00
+[17:00] L'orario attuale e' 17:00
+[20:00] L'orario attuale e' 20:00
+Input: show Impianto_fotovoltaico
+[20:00] L'orario attuale e' 20:00
+[20:00] Il dispositivo Impianto_fotovoltaico ha prodotto 16.50 Wh
+Input: set time 01:00
+[20:00] L'orario attuale e' 20:00
+[23:59] L'orario attuale e' 23:59
+Fine Giornata!

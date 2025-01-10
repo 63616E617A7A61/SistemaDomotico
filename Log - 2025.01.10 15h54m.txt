@@ -1,0 +1,89 @@
+Input: set Lavatrice on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Lavatrice acceso
+Input: set Scaldabagno on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Scaldabagno acceso
+Input: set Forno_a_microonde on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Forno_a_microonde acceso
+Il sistema e' in sovraccarico!
+[00:00] Dispositivo Forno_a_microonde spento
+Input: set time 03:00
+[00:00] L'orario attuale e' 00:00
+[01:50] Dispositivo Lavatrice spento
+[03:00] L'orario attuale e' 03:00
+Input: reset time
+[03:00] L'orario attuale e' 03:00
+[00:00] L'orario attuale e' 00:00
+Input: set Impianto_fotovoltaico on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Impianto_fotovoltaico acceso
+Input: set Pompa_di_calore on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Pompa_di_calore acceso
+Input: set Lavastoviglie on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Lavastoviglie acceso
+Input: set Frigorifero on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Frigorifero acceso
+Input: set Forno_a_microonde on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Forno_a_microonde acceso
+Input: set Televisore on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Televisore acceso
+Input: set time 00:20
+[00:00] L'orario attuale e' 00:00
+[00:02] Dispositivo Forno_a_microonde spento
+[00:20] L'orario attuale e' 00:20
+Input: set Impianto_fotovoltaico off
+[00:20] L'orario attuale e' 00:20
+[00:20] Dispositivo Impianto_fotovoltaico spento
+Il sistema e' in sovraccarico!
+[00:20] Dispositivo Televisore spento
+Impossibile spegnere Frigorifero a causa di un sovraccarico
+[00:20] Dispositivo Lavastoviglie spento
+Input: show
+[00:20] L'orario attuale e' 00:20
+[00:20] Attualmente il sistema ha prodotto 0.50 kWh e consumato 1.39 kWh. Nello specifico:
+- Il dispositivo Impianto_fotovoltaico ha prodotto 0.50 Wh
+- Il dispositivo Lavatrice ha consumato 0.00 Wh
+- Il dispositivo Lavastoviglie ha consumato 0.50 Wh
+- Il dispositivo Pompa_di_calore ha consumato 0.66 Wh
+- Il dispositivo Tapparelle_elettriche ha consumato 0.00 Wh
+- Il dispositivo Scaldabagno ha consumato 0.00 Wh
+- Il dispositivo Frigorifero ha consumato 0.13 Wh
+- Il dispositivo Forno_a_microonde ha consumato 0.02 Wh
+- Il dispositivo Asciugatrice ha consumato 0.00 Wh
+- Il dispositivo Televisore ha consumato 0.06 Wh
+Input: reset all
+[00:20] L'orario attuale e' 00:20
+Resettato tutto
+Input: set Lavastoviglie on
+[00:00] L'orario attuale e' 00:00
+[00:00] Dispositivo Lavastoviglie acceso
+Input: set time 06:00
+[00:00] L'orario attuale e' 00:00
+[06:00] L'orario attuale e' 06:00
+Input: show
+[06:00] L'orario attuale e' 06:00
+[06:00] Attualmente il sistema ha prodotto 0.00 kWh e consumato 9.00 kWh. Nello specifico:
+- Il dispositivo Impianto_fotovoltaico ha consumato 0.00 Wh
+- Il dispositivo Lavatrice ha consumato 0.00 Wh
+- Il dispositivo Lavastoviglie ha consumato 9.00 Wh
+- Il dispositivo Pompa_di_calore ha consumato 0.00 Wh
+- Il dispositivo Tapparelle_elettriche ha consumato 0.00 Wh
+- Il dispositivo Scaldabagno ha consumato 0.00 Wh
+- Il dispositivo Frigorifero ha consumato 0.00 Wh
+- Il dispositivo Forno_a_microonde ha consumato 0.00 Wh
+- Il dispositivo Asciugatrice ha consumato 0.00 Wh
+- Il dispositivo Televisore ha consumato 0.00 Wh
+Input: set Lavastoviglie off
+[06:00] L'orario attuale e' 06:00
+[06:00] Dispositivo Lavastoviglie spento
+Input: set time 01:00
+[06:00] L'orario attuale e' 06:00
+[23:59] L'orario attuale e' 23:59
+Fine Giornata!

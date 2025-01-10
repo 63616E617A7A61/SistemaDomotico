@@ -253,6 +253,7 @@ std::string House::resetTime(){
         d->deactivate();
         d->setEnTotal(0);
     }
+    currEnCost = 0;
     return getCurrentTime();
 }
 
