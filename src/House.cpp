@@ -273,9 +273,10 @@ std::string House::resetTimers(){
  * @return A string indicating that everything has been reset.
  */
 std::string House::resetAll(){
-    resetTime();
-    resetTimers();
-    return "Resettato tutto";
+    std::string out = ""; 
+    out += resetTimers() + "\n";
+    out += resetTime();
+    return out;
 }
 
 /**

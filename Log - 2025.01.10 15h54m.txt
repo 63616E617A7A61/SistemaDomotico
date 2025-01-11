@@ -60,7 +60,8 @@ Input: show
 - Il dispositivo Televisore ha consumato 0.06 Wh
 Input: reset all
 [00:20] L'orario attuale e' 00:20
-Resettato tutto
+Rimossi tutti i timer di tutti i dispositivi
+[00:00] L'orario attuale e' 00:00
 Input: set Lavastoviglie on
 [00:00] L'orario attuale e' 00:00
 [00:00] Dispositivo Lavastoviglie acceso
